@@ -1,0 +1,34 @@
+PatronPermission:
+  description: "Patron permission for a reading room"
+  type: object
+  properties:
+    id:
+      description: "A unique patron permission record identifier"
+      type: string
+    userId:
+      description: "A unique identifier of user"
+      type: string
+    readingRoomId:
+      description: "A unique identifier of reading room"
+      type: string
+    readingRoomName:
+      description: "Name of the reading room"
+      type: string
+    access:
+      description: "A field to determine the access of a user for a reading room"
+      type: string
+      enum:
+        - ALLOWED
+        - NOT_ALLOWED
+    notes:
+      description: "Notes for the user"
+      type: string
+    metadata:
+      type: object
+      $ref: "common.yaml#/Metadata"
+
+PatronPermissionCollection:
+  type: "array"
+  description: "The list of patronPermissions"
+  items:
+    $ref: "patronPermission.yaml#/PatronPermission"

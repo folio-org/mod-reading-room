@@ -1,0 +1,10 @@
+ServicePoint:
+  description: "Service point associated to the reading room"
+  type: object
+  properties:
+    id:
+      description: "A unique service point identifier"
+      type: string
+    name:
+      description: "Name of the service point"
+      type: string

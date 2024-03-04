@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: Reading Room API
+  description: "Reading Room API"
+  version: 1.0.0
+paths:
+  /reading-room:
+    get:
+      summary: Get list of reading rooms based on Cql query
+      operationId: getReadingRoomsByCqlQuery
+      parameters:
+        - $ref: '#/components/parameters/cqlQuery'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          description: Reading room retrieved successfully
+          $ref: '#/components/responses/readingRoomCollection'
+    post:
+      summary: create a new reading room
+      operationId: createReadingRoom
+      requestBody:
+        $ref: '#/components/requestBodies/readingRoomBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/readingRoom'
+  /reading-room/{readingRoomId}:
+    parameters:
+      - $ref: '#/components/parameters/readingRoomId'
+    put:
+      description: Update reading room details
+      operationId: updateReadingRoomById
+      requestBody:
+        $ref: '#/components/requestBodies/readingRoomBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/readingRoom'
+    delete:
+      description: Delete reading room
+      operationId: deleteReadingRoomById
+      responses:
+        '204':
+          description: Reading room deleted successfully
+  /reading-room/access-log:
+    post:
+      summary: create a access log for reading room
+      operationId: createAccessLog
+      requestBody:
+        $ref: '#/components/requestBodies/accessLogBody'
+      responses:
+        '204':
+          description: Access log created successfully
+
+components:
+  requestBodies:
+    readingRoomBody:
+      description: reading room
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/readingRoom.yaml#/ReadingRoom"
+    accessLogBody:
+      description: access Log
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/accessLog.yaml#/AccessLog"
+  responses:
+#    trait_validate_422:
+#      description: Validation errors
+#      content:
+#        application/json:
+#          example: examples/errors.sample
+#          schema:
+#            $ref: "#/components/schemas/errors"
+#    '400':
+#      description: Bad request
+#      content:
+#        application/json:
+#          schema:
+#            $ref: "#/components/schemas/errors"
+#    '500':
+#      description: Internal server error
+#      content:
+#        application/json:
+#          schema:
+#            $ref: "#/components/schemas/errors"
+    readingRoom:
+      description: readingroom Object
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/readingRoom.yaml#/ReadingRoom"
+    readingRoomCollection:
+      description: Collection of readingroom Object
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/readingRoom.yaml#/ReadingRoomCollection"
+  schemas:
+#    errors:
+#      $ref: schemas/errors.json
+    uuid:
+      $ref: schemas/uuid.yaml
+  parameters:
+    readingRoomId:
+      in: path
+      name: readingRoomId
+      schema:
+        $ref: "schemas/common.yaml#/uuid"
+      required: true
+    cqlQuery:
+      name: query
+      in: query
+      schema:
+        type: string
+        default: cql.allRecords=1
+      required: false
+      description: A query expressed as a CQL string
+    offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+        maximum: 2147483647
+      required: false
+      description: Skip over a number of elements by specifying an offset value for the query
+    limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 1000
+        minimum: 1
+        maximum: 2147483647
+      required: false
+      description: Limit the number of elements returned in the response

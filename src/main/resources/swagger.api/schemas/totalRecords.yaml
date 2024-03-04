@@ -1,0 +1,6 @@
+TotalRecords:
+  type: object
+  properties:
+    totalRecords:
+      type: Integer
+      description: total records value

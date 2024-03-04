@@ -1,0 +1,23 @@
+AccessLog:
+  description: "Access log"
+  type: object
+  properties:
+    id:
+      description: "A unique access log identifier"
+      type: string
+    readingRoomId:
+      description: "Id of a reading room"
+      type: string
+    patronId:
+      description: "Id of a user who allows or denies the user from accessing the reading room"
+      type: string
+    userId:
+      description: "Id of a user who wants to access the reading room"
+      type: string
+    action:
+      description: "A field to determine whether a user is allowed to a reading room or not"
+      type: string
+      enum:
+        - ALLOWED
+        - DENIED
+

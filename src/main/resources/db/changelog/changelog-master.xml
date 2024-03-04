@@ -1,0 +1,11 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+  <include file="changes/create_reading_room.xml" relativeToChangelogFile="true"/>
+  <include file="changes/create_reading_room_servicepoint.xml" relativeToChangelogFile="true"/>
+  <include file="changes/create_patron_permission.xml" relativeToChangelogFile="true"/>
+  <include file="changes/create_access_log.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

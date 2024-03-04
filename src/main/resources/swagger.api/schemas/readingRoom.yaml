@@ -1,0 +1,31 @@
+ReadingRoom:
+  description: "Reading room"
+  type: object
+  properties:
+    id:
+      description: "A unique reading room identifier"
+      type: string
+    name:
+      description: "Name of the reading room"
+      type: string
+    public:
+      description: "A flag to determine whether a reading room is public or not"
+      type: boolean
+    servicePoint:
+      $ref: "servicePoint.yaml#/ServicePoint"
+
+ReadingRoomCollection:
+  type: "object"
+  description: "A JSON schema for the readingroom Collection"
+  properties:
+    items:
+      type: "array"
+      description: "The list of readingroom"
+      $ref: "readingRoom.yaml#/ReadingRoom"
+    totalRecords:
+      type: "integer"
+  additionalProperties: false
+  required:
+    - "items"
+    - "totalRecords"
+

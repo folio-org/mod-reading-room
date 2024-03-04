@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Patron Permission API
+  description: "Patron Permission API"
+  version: 1.0.0
+paths:
+  /patron-permission/users/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+    get:
+      summary: Get list of patron permissions based on userId
+      operationId: getPatronPermissionsByUserId
+      responses:
+        '200':
+          description: patron permissions retrieved successfully
+          $ref: '#/components/responses/patronPermissionObject'
+    post:
+      summary: create list of patron permissions based on userId
+      operationId: createPatronPermissionsByUserId
+      requestBody:
+        $ref: '#/components/requestBodies/patronPermissionBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/patronPermissionObject'
+    put:
+      summary: update list of patron permissions based on userId
+      operationId: updatePatronPermissionsByUserId
+      requestBody:
+        $ref: '#/components/requestBodies/patronPermissionBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/patronPermissionObject'
+
+components:
+  requestBodies:
+    patronPermissionBody:
+      description: Collection of patron permissions
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/patronPermission.yaml#/PatronPermissionCollection"
+  responses:
+    patronPermissionObject:
+      description: Collection of patron permissions
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/patronPermission.yaml#/PatronPermissionCollection"
+  parameters:
+    userId:
+      in: path
+      name: userId
+      schema:
+        $ref: "schemas/common.yaml#/uuid"
+      required: true

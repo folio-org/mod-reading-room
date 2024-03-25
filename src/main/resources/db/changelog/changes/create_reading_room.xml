@@ -6,7 +6,7 @@
 
   <!-- Create reading room table -->
   <changeSet id="createTableReadingRoom" author="vignesh">
-    <createTable tableName="reading_room">
+    <createTable tableName="reading_rooms">
       <column name="id" type="UUID">
         <constraints primaryKey="true" primaryKeyName="pk_readingroom_id"/>
       </column>

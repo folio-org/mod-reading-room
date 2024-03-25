@@ -6,7 +6,7 @@
 
   <!-- Create reading room service point table -->
   <changeSet id="createTablereadingRoomServicePoint" author="vignesh">
-    <createTable tableName="reading_room_service_point">
+    <createTable tableName="reading_room_service_points">
       <column name="id" type="UUID">
         <constraints primaryKey="true" primaryKeyName="pk_readingroom_servicepoint_id"/>
       </column>

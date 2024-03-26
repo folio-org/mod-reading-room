@@ -30,7 +30,7 @@ paths:
         $ref: '#/components/requestBodies/readingRoomBody'
       responses:
         '201':
-          $ref: '#/components/responses/readingRoom'
+          $ref: '#/components/responses/readingRoomResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -47,7 +47,7 @@ paths:
         $ref: '#/components/requestBodies/readingRoomBody'
       responses:
         '200':
-          $ref: '#/components/responses/readingRoom'
+          $ref: '#/components/responses/readingRoomResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':

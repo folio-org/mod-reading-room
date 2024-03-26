@@ -1,12 +1,13 @@
 openapi: 3.0.3
 info:
   title: Reading Room API
-  description: "Reading Room API"
+  description: Reading Room API
   version: 1.0.0
 paths:
   /reading-room:
+    description: Reading-Room CRUD endpoints
     get:
-      summary: Get list of reading rooms based on Cql query
+      description: Get list of reading rooms based on Cql query
       operationId: getReadingRoomsByCqlQuery
       parameters:
         - $ref: '#/components/parameters/cqlQuery'
@@ -15,7 +16,13 @@ paths:
       responses:
         '200':
           description: Reading room retrieved successfully
-          $ref: '#/components/responses/readingRoomCollection'
+          $ref: '#/components/responses/readingRoomCollectionResponse'
+          404':
+            $ref: '#/components/responses/NotFound'
+            '400':
+              $ref: '#/components/responses/BadRequest'
+            '500':
+              $ref: '#/components/responses/InternalServerError'
     post:
       summary: create a new reading room
       operationId: createReadingRoom
@@ -24,6 +31,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/readingRoom'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /reading-room/{readingRoomId}:
     parameters:
       - $ref: '#/components/parameters/readingRoomId'
@@ -35,12 +48,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/readingRoom'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       description: Delete reading room
       operationId: deleteReadingRoomById
       responses:
         '204':
           description: Reading room deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /reading-room/access-log:
     post:
       summary: create a access log for reading room
@@ -50,7 +75,12 @@ paths:
       responses:
         '204':
           description: Access log created successfully
-
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   requestBodies:
     readingRoomBody:
@@ -68,40 +98,54 @@ components:
           schema:
             $ref: "schemas/accessLog.yaml#/AccessLog"
   responses:
-#    trait_validate_422:
-#      description: Validation errors
-#      content:
-#        application/json:
-#          example: examples/errors.sample
-#          schema:
-#            $ref: "#/components/schemas/errors"
-#    '400':
-#      description: Bad request
-#      content:
-#        application/json:
-#          schema:
-#            $ref: "#/components/schemas/errors"
-#    '500':
-#      description: Internal server error
-#      content:
-#        application/json:
-#          schema:
-#            $ref: "#/components/schemas/errors"
-    readingRoom:
-      description: readingroom Object
+    readingRoomResponse:
+      description: readingRoom Object
       content:
         application/json:
           schema:
             $ref: "schemas/readingRoom.yaml#/ReadingRoom"
-    readingRoomCollection:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
+    Conflict:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Errors"
+    Unauthorized:
+      description: Not authorized to perform requested action
+      content:
+        text/plain:
+          example: unable to perform action -- unauthorized
+    UnprocessableEntity:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/common.yaml#/Errors'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
+    readingRoomCollectionResponse:
       description: Collection of readingroom Object
       content:
         application/json:
           schema:
             $ref: "schemas/readingRoom.yaml#/ReadingRoomCollection"
   schemas:
-#    errors:
-#      $ref: schemas/errors.json
     uuid:
       $ref: schemas/uuid.yaml
   parameters:

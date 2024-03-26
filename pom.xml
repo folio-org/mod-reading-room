@@ -103,13 +103,6 @@
       <version>${mapstruct.version}</version>
       <scope>provided</scope>
     </dependency>
-
-<!--    <dependency>-->
-<!--      <groupId>org.openapitools</groupId>-->
-<!--      <artifactId>jackson-databind-nullable</artifactId>-->
-<!--      <version>0.2.6</version>-->
-<!--    </dependency>-->
-
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -253,10 +246,11 @@
                     <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
                     <generateModelDocumentation>true</generateModelDocumentation>
                     <configOptions>
+                      <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                       <dateLibrary>java</dateLibrary>
                       <interfaceOnly>true</interfaceOnly>
                       <useSpringBoot3>true</useSpringBoot3>
-                      <additionalModelTypeAnnotations>@lombok.Builder</additionalModelTypeAnnotations>
+                      <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
                     </configOptions>
 
                   </configuration>
@@ -291,17 +285,6 @@
                 </execution>
               </executions>
             </plugin>
-
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-surefire-plugin</artifactId>-->
-<!--        <version>3.0.0-M7</version>-->
-<!--        <configuration>-->
-<!--          <useSystemClassLoader>false</useSystemClassLoader>-->
-<!--          <argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>

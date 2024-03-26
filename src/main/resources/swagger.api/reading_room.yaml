@@ -66,7 +66,9 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /reading-room/access-log:
+  /reading-room/{readingRoomId}/access-log:
+    parameters:
+      - $ref: '#/components/parameters/readingRoomId'
     post:
       summary: create a access log for reading room
       operationId: createAccessLog

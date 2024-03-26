@@ -5,15 +5,19 @@ PatronPermission:
     id:
       description: "A unique patron permission record identifier"
       type: string
+      format: "UUID"
     userId:
       description: "A unique identifier of user"
       type: string
+      format: "UUID"
     readingRoomId:
       description: "A unique identifier of reading room"
       type: string
+      format: "UUID"
     readingRoomName:
       description: "Name of the reading room"
       type: string
+      format: "UUID"
     access:
       description: "A field to determine the access of a user for a reading room"
       type: string

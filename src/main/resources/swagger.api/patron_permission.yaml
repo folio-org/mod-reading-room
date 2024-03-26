@@ -4,7 +4,7 @@ info:
   description: "Patron Permission API"
   version: 1.0.0
 paths:
-  /patron-permission/users/{userId}:
+  /patron-permission/patron-permission/{patronId}:
     parameters:
       - $ref: '#/components/parameters/userId'
     get:
@@ -102,7 +102,7 @@ components:
   parameters:
     userId:
       in: path
-      name: userId
+      name: patronId
       schema:
         $ref: "schemas/common.yaml#/uuid"
       required: true

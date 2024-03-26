@@ -5,6 +5,7 @@ ReadingRoom:
     id:
       description: "A unique reading room identifier"
       type: string
+      format: "UUID"
     name:
       description: "Name of the reading room"
       type: string

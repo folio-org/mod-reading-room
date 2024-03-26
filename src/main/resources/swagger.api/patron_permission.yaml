@@ -13,7 +13,13 @@ paths:
       responses:
         '200':
           description: patron permissions retrieved successfully
-          $ref: '#/components/responses/patronPermissionObject'
+          $ref: '#/components/responses/patronPermissionObjectResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     post:
       summary: create list of patron permissions based on userId
       operationId: createPatronPermissionsByUserId
@@ -21,7 +27,13 @@ paths:
         $ref: '#/components/requestBodies/patronPermissionBody'
       responses:
         '201':
-          $ref: '#/components/responses/patronPermissionObject'
+          $ref: '#/components/responses/patronPermissionObjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     put:
       summary: update list of patron permissions based on userId
       operationId: updatePatronPermissionsByUserId
@@ -29,8 +41,13 @@ paths:
         $ref: '#/components/requestBodies/patronPermissionBody'
       responses:
         '200':
-          $ref: '#/components/responses/patronPermissionObject'
-
+          $ref: '#/components/responses/patronPermissionObjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   requestBodies:
     patronPermissionBody:
@@ -41,12 +58,47 @@ components:
           schema:
             $ref: "schemas/patronPermission.yaml#/PatronPermissionCollection"
   responses:
-    patronPermissionObject:
+    patronPermissionObjectResponse:
       description: Collection of patron permissions
       content:
         application/json:
           schema:
             $ref: "schemas/patronPermission.yaml#/PatronPermissionCollection"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
+    Conflict:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Errors"
+    Unauthorized:
+      description: Not authorized to perform requested action
+      content:
+        text/plain:
+          example: unable to perform action -- unauthorized
+    UnprocessableEntity:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/common.yaml#/Errors'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/common.yaml#/Error"
   parameters:
     userId:
       in: path

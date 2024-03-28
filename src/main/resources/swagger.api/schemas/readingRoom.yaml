@@ -5,14 +5,18 @@ ReadingRoom:
     id:
       description: "A unique reading room identifier"
       type: string
+      format: "UUID"
     name:
       description: "Name of the reading room"
       type: string
     public:
       description: "A flag to determine whether a reading room is public or not"
       type: boolean
-    servicePoint:
-      $ref: "servicePoint.yaml#/ServicePoint"
+    servicePoints:
+      description: "Service points which are associated to Reading Room"
+      type: array
+      items:
+        $ref: "servicePoint.yaml#/ServicePoint"
 
 ReadingRoomCollection:
   type: "object"

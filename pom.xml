@@ -28,15 +28,14 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- runtime dependencies -->
-    <folio-spring-base.version>8.0.0</folio-spring-base.version>
-    <openapi-generator.version>6.2.1</openapi-generator.version>
-    <mapstruct.version>1.5.2.Final</mapstruct.version>
+    <folio-spring-base.version>8.1.0</folio-spring-base.version>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
-    <mvn-failsafe.version>3.2.1</mvn-failsafe.version>
+    <mvn-failsafe.version>3.2.5</mvn-failsafe.version>
 
     <!-- test dependencies -->
-    <wiremock.version>2.33.2</wiremock.version>
-    <testcontainers.version>1.17.2</testcontainers.version>
+    <wiremock.version>3.0.1</wiremock.version>
+    <testcontainers.version>1.19.7</testcontainers.version>
   </properties>
 
   <dependencies>
@@ -103,13 +102,6 @@
       <version>${mapstruct.version}</version>
       <scope>provided</scope>
     </dependency>
-
-<!--    <dependency>-->
-<!--      <groupId>org.openapitools</groupId>-->
-<!--      <artifactId>jackson-databind-nullable</artifactId>-->
-<!--      <version>0.2.6</version>-->
-<!--    </dependency>-->
-
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -253,10 +245,11 @@
                     <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
                     <generateModelDocumentation>true</generateModelDocumentation>
                     <configOptions>
+                      <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                       <dateLibrary>java</dateLibrary>
                       <interfaceOnly>true</interfaceOnly>
                       <useSpringBoot3>true</useSpringBoot3>
-                      <additionalModelTypeAnnotations>@lombok.Builder</additionalModelTypeAnnotations>
+                      <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
                     </configOptions>
 
                   </configuration>
@@ -281,27 +274,17 @@
                     <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
                     <generateModelDocumentation>true</generateModelDocumentation>
                     <configOptions>
+                      <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                       <dateLibrary>java</dateLibrary>
                       <interfaceOnly>true</interfaceOnly>
                       <useSpringBoot3>true</useSpringBoot3>
-                      <additionalModelTypeAnnotations>@lombok.Builder</additionalModelTypeAnnotations>
+                      <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
                     </configOptions>
 
                   </configuration>
                 </execution>
               </executions>
             </plugin>
-
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-surefire-plugin</artifactId>-->
-<!--        <version>3.0.0-M7</version>-->
-<!--        <configuration>-->
-<!--          <useSystemClassLoader>false</useSystemClassLoader>-->
-<!--          <argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>

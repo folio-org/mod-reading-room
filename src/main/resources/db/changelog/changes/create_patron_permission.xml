@@ -23,7 +23,7 @@
 
   <!-- Create patron permission table -->
   <changeSet id="createTablePatronPermission" author="vignesh">
-    <createTable tableName="patron_permissions">
+    <createTable tableName="patron_permission">
       <column name="id" type="UUID">
         <constraints primaryKey="true" primaryKeyName="pk_patronpermission_id"/>
       </column>

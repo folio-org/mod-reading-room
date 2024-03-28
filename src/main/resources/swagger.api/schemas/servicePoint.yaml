@@ -6,3 +6,6 @@ ServicePoint:
       description: "A unique service point identifier"
       type: string
       format: "UUID"
+    name:
+      description: "Name of the service point"
+      type: string

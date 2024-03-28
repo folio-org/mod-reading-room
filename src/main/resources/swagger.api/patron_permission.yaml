@@ -4,7 +4,7 @@ info:
   description: "Patron Permission API"
   version: 1.0.0
 paths:
-  /patron-permission/patron-permission/{patronId}:
+  /reading-room-patron-permission/{patronId}:
     parameters:
       - $ref: '#/components/parameters/userId'
     get:

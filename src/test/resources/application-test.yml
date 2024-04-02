@@ -18,7 +18,7 @@ folio:
   environment: ${ENV:folio}
   system-user:
     enabled: false
-    password: test
+    password: system-user
 management:
   endpoints:
     enabled-by-default: false

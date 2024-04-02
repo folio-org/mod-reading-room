@@ -47,7 +47,7 @@ folio:
   environment: ${ENV:folio}
   system-user:
     enabled: false
-    password: {SYSTEM_USER_PASSWORD}
+    password: ${SYSTEM_USER_PASSWORD:dummy} # This is not used but added to avoid DI errors from folio-spring-system-user
 management:
   endpoints:
     web:

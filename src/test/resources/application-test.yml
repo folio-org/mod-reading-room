@@ -15,6 +15,10 @@ folio:
   tenant:
     validation:
       enabled: false
+  environment: ${ENV:folio}
+  system-user:
+    enabled: false
+    password: {SYSTEM_USER_PASSWORD:test}
 management:
   endpoints:
     enabled-by-default: false

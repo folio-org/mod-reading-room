@@ -1,6 +1,12 @@
 {
   "id": "@artifactId@-@version@",
   "name": "Manage reading room and its related access",
+  "requires": [
+    {
+      "id": "service-points",
+      "version": "3.3"
+    }
+  ],
   "provides": [
     {
       "id": "reading-room",
@@ -9,55 +15,65 @@
         {
           "methods": ["POST"],
           "pathPattern": "/reading-room",
-          "permissionsRequired": [],
-          "modulePermissions": []
+          "permissionsRequired": [
+            "reading-room.item.post"
+          ],
+          "modulePermissions": [
+            "inventory-storage.service-points.collection.get"
+          ]
         },
         {
           "methods": ["GET"],
           "pathPattern": "/reading-room",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.collection.get"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["PUT"],
           "pathPattern": "/reading-room/{readingRoomId}",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.item.put"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["DELETE"],
           "pathPattern": "/reading-room/{readingRoomId}",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.item.delete"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["POST"],
           "pathPattern": "/reading-room/access-log",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.access-log.post"
+          ],
           "modulePermissions": []
         }
       ]
     },
     {
-      "id": "patron-permission",
+      "id": "reading-room-patron-permission",
       "version": "1.0",
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
-          "modulePermissions": []
-        },
-        {
-          "methods": ["POST"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
+          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "permissionsRequired": [
+            "reading-room-patron-permission.item.get"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["PUT"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
+          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "permissionsRequired": [
+            "reading-room-patron-permission.item.put"
+          ],
           "modulePermissions": []
         }
       ]
@@ -79,7 +95,6 @@
     }
   ],
   "permissionSets" : [],
-  "requires": [],
   "launchDescriptor": {
     "dockerImage": "@artifactId@:@version@",
     "dockerPull": false,

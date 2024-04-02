@@ -9,10 +9,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.Set;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.folio.readingroom.domain.base.AuditableEntity;
@@ -20,10 +17,7 @@ import org.folio.readingroom.domain.base.AuditableEntity;
 @Entity
 @Getter
 @Setter
-@ToString
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@ToString(exclude = {"servicePoints"})
 @Table(name = "reading_room")
 public class ReadingRoomEntity extends AuditableEntity {
 
@@ -38,7 +32,6 @@ public class ReadingRoomEntity extends AuditableEntity {
   @OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
     mappedBy = "readingRoom")
-  @ToString.Exclude
   private Set<ReadingRoomServicePointEntity> servicePoints;
 
 }

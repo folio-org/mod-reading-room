@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
-import org.folio.readingroom.exception.BadRequestException;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
@@ -50,7 +49,8 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
       throw new NotFoundException("One of the ServicePointId doesn't exist");
     }
     if (!rrServicePointRepository.findAllById(servicePointIds).isEmpty()) {
-      throw new BadRequestException("One of the servicePointId already associated with existing Reading room");
+      throw new ResourceAlreadyExistException(
+        "One of the servicePointId already associated with existing Reading room");
     }
   }
 

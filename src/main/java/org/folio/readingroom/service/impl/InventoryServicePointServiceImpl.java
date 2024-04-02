@@ -5,7 +5,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.folio.readingroom.client.feign.InventoryServicePointClient;
 import org.folio.readingroom.service.InventoryServicePointService;
-import org.folio.readingroom.util.CqlHelper;
+import org.folio.readingroom.utils.CqlHelper;
 import org.springframework.stereotype.Service;
 
 @Service

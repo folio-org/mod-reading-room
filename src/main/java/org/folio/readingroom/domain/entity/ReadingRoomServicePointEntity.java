@@ -7,20 +7,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
-@ToString
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@ToString(exclude = {"readingRoom"})
 @Table(name = "reading_room_service_point")
 public class ReadingRoomServicePointEntity {
 
@@ -32,7 +26,6 @@ public class ReadingRoomServicePointEntity {
 
   @ManyToOne
   @JoinColumn(name = "reading_room_id", nullable = false)
-  @ToString.Exclude
   private ReadingRoomEntity readingRoom;
 
 }

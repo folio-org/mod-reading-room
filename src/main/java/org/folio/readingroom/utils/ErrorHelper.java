@@ -9,17 +9,17 @@ import org.folio.readingroom.domain.dto.Errors;
 public class ErrorHelper {
 
   public static Error createError(String message, ErrorType type, ErrorCode errorCode) {
-    return Error.builder()
-      .message(message)
-      .type(type.getTypeCode())
-      .code(errorCode == null ? null : errorCode.name())
-      .build();
+    var error = new Error();
+    error.setMessage(message);
+    error.setCode(errorCode == null ? null : errorCode.name());
+    error.setType(type.getTypeCode());
+    return error;
   }
 
   public static Errors createErrors(Error error) {
-    return Errors.builder()
-      .errors(List.of(error))
-      .build();
+    var e = new Errors();
+    e.setErrors(List.of(error));
+    return e;
   }
 
 

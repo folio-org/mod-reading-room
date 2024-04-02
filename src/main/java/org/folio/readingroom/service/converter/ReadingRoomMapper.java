@@ -11,10 +11,18 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+@Mapper(componentModel = "spring",
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+  unmappedTargetPolicy = ReportingPolicy.IGNORE,
   builder = @Builder(disableBuilder = true))
 public interface ReadingRoomMapper {
+
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "createdDate", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "updatedDate", ignore = true)
   ReadingRoomEntity toEntity(ReadingRoom readingRoom);
 
   @Mapping(target = "servicePointId", source = "servicePoint.id")
@@ -25,6 +33,10 @@ public interface ReadingRoomMapper {
   @Mapping(target = "name", source = "servicePointEntity.servicePointName")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
+  @Mapping(target = "metadata.createdByUserId", source = "createdBy")
+  @Mapping(target = "metadata.createdDate", source = "createdDate")
+  @Mapping(target = "metadata.updatedByUserId", source = "updatedBy")
+  @Mapping(target = "metadata.updatedDate", source = "updatedDate")
   org.folio.readingroom.domain.dto.ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
 
   @AfterMapping

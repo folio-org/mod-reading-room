@@ -111,6 +111,28 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().is(409))
       .andExpect(content().string(containsString(
         "One of the servicePointId already associated with existing Reading room")));
+
+    // creating Reading room without servicePoints
+    readingRoom = createReadingRoom(UUID.randomUUID(), true);
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(422))
+      .andExpect(content().string(containsString(
+        "'servicePoints' validation failed")));
+
+    // creating Reading room without reading room object
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(""))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(400));
+
   }
 
   private void removeReadingRoomIfExists() {

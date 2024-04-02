@@ -15,11 +15,17 @@ ReadingRoom:
     servicePoints:
       description: "Service points which are associated to Reading Room"
       type: array
+      minItems: 1
       items:
         $ref: "servicePoint.yaml#/ServicePoint"
     metadata:
       type: object
       $ref: "common.yaml#/Metadata"
+  required:
+    - "id"
+    - "name"
+    - "ispublic"
+    - "servicePoints"
 
 ReadingRoomCollection:
   type: "object"

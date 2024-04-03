@@ -19,6 +19,7 @@ public class ErrorHelper {
   public static Errors createErrors(Error error) {
     var e = new Errors();
     e.setErrors(List.of(error));
+    e.setTotalRecords(1);
     return e;
   }
 

@@ -29,6 +29,19 @@
     {
       "request": {
         "method": "GET",
+        "url": "/service-points?query=id==(9765c56f-608d-4c93-94fe-f365f16e6970)"
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n \"servicepoints\": [\n {\n \"id\": \"9765c56f-608d-4c93-94fe-f365f16e6970\",\n  \"name\": \"Online\",\n  \"code\": \"Online\",\n  \"discoveryDisplayName\": \"Online\",\n            \"shelvingLagTime\": 0,\n  \"pickupLocation\": false,\n  \"holdShelfClosedLibraryDateManagement\": \"Keep_the_current_due_date\",\n  \"staffSlips\": []}\n    ],\n  \"totalRecords\": 1 \n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
         "url": "/service-points?query=id==(7c5abc9f-f3d7-4856-b8d7-6712462ca009)"
       },
       "response": {

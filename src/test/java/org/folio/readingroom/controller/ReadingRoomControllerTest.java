@@ -94,8 +94,9 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().is(404))
-      .andExpect(content().string(containsString("One of the ServicePointId doesn't exist")));
+      .andExpect(status().is(422))
+      .andExpect(content().string(containsString(
+        "ServicePointId " + INVALID_SERVICE_POINT_ID + " doesn't exists in inventory")));
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
     readingRoom.servicePoints(List.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
@@ -108,9 +109,9 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().is(409))
+      .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "One of the servicePointId already associated with existing Reading room")));
+        "ServicePointId " + SERVICE_POINT_ID1 + " already associated with another Reading room")));
 
     // creating Reading room without servicePoints
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
@@ -122,7 +123,20 @@ class ReadingRoomControllerTest extends BaseIT {
           .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "'servicePoints' validation failed")));
+        "servicePoints size must be between 1 and 2147483647")));
+
+    // creating Reading room with duplicate reading room name
+    readingRoom = createReadingRoom(UUID.randomUUID(), true);
+    readingRoom.servicePoints(List.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2)));
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(409))
+      .andExpect(content().string(containsString(
+        "duplicate key value violates unique constraint")));
 
     // creating Reading room without reading room object
     this.mockMvc.perform(

@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
+import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
+import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.InventoryServicePointService;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
-import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,16 +42,21 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   }
 
   private void validateServicePoints(List<ServicePoint> servicePointDtoList) {
-    List<UUID> servicePointIds = servicePointDtoList
+    var servicePointIds = servicePointDtoList
       .stream()
       .map(ServicePoint::getId)
       .toList();
-    if (!inventoryServicePointService.fetchInvalidServicePointList(servicePointIds).isEmpty()) {
-      throw new NotFoundException("One of the ServicePointId doesn't exist");
+    var invalidServicePointList = inventoryServicePointService.fetchInvalidServicePointList(servicePointIds);
+    if (!invalidServicePointList.isEmpty()) {
+      throw new ServicePointException("ServicePointId %s doesn't exists in inventory", invalidServicePointList);
     }
-    if (!rrServicePointRepository.findAllById(servicePointIds).isEmpty()) {
-      throw new ResourceAlreadyExistException(
-        "One of the servicePointId already associated with existing Reading room");
+    var existingServicePointList = rrServicePointRepository.findAllById(servicePointIds);
+    if (!existingServicePointList.isEmpty()) {
+      throw new ServicePointException("ServicePointId %s already associated with another Reading room",
+        existingServicePointList
+          .stream()
+          .map(ReadingRoomServicePointEntity::getServicePointId)
+          .toList());
     }
   }
 

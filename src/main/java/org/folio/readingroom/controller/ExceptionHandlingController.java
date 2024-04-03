@@ -9,12 +9,15 @@ import static org.folio.readingroom.utils.ErrorHelper.createExternalError;
 import static org.folio.readingroom.utils.ErrorHelper.createInternalError;
 
 import feign.FeignException;
+import java.util.Objects;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.Error;
 import org.folio.readingroom.domain.dto.Errors;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
+import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.utils.ErrorHelper;
 import org.folio.spring.exception.NotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,6 +56,13 @@ public class ExceptionHandlingController {
     return createExternalError(ex.getMessage(), DUPLICATE_ERROR);
   }
 
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler({DataIntegrityViolationException.class})
+  public Errors handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    logExceptionMessage(ex);
+    return createExternalError(Objects.requireNonNull(ex.getRootCause()).getMessage(), DUPLICATE_ERROR);
+  }
+
   @ResponseStatus(HttpStatus.BAD_GATEWAY)
   @ExceptionHandler(FeignException.BadGateway.class)
   public Errors handleBadGatewayException(FeignException.BadGateway ex) {
@@ -67,9 +77,9 @@ public class ExceptionHandlingController {
     HttpMessageNotReadableException.class,
     IllegalArgumentException.class
   })
-  public Errors handleValidationErrors(Exception e) {
-    log.error("Handle validation errors", e);
-    return createExternalError(e.getMessage(), VALIDATION_ERROR);
+  public Errors handleValidationErrors(Exception ex) {
+    logExceptionMessage(ex);
+    return createExternalError(ex.getMessage(), VALIDATION_ERROR);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -79,13 +89,33 @@ public class ExceptionHandlingController {
     var errorList = ex.getBindingResult().getFieldErrors()
       .stream()
       .map(error -> new Error()
-        // Extract the error message and validation errors from the MethodArgumentNotValidException
-        .message(String.format("'%s' validation failed. %s", error.getField(), error.getDefaultMessage()))
+        // Extract the error message from MethodArgumentNotValidException
+        .message(error.getField() + " " +  error.getDefaultMessage())
         .type(ErrorHelper.ErrorType.EXTERNAL.getTypeCode())
         .code(VALIDATION_ERROR.name()))
       .toList();
 
-    return new Errors().errors(errorList);
+    return new Errors()
+      .errors(errorList)
+      .totalRecords(errorList.size());
+  }
+
+  @ExceptionHandler(ServicePointException.class)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  public Errors handleInvalidServicePointException(ServicePointException ex) {
+    logExceptionMessage(ex);
+    var errorList = ex.getInvalidIds()
+      .stream()
+      .map(id -> new Error()
+        // Extract the error message from the ServicePointException
+        .message(String.format(ex.getMessage(), id))
+        .type(ErrorHelper.ErrorType.EXTERNAL.getTypeCode())
+        .code(VALIDATION_ERROR.name()))
+      .toList();
+
+    return new Errors()
+      .errors(errorList)
+      .totalRecords(errorList.size());
   }
 
   private void logExceptionMessage(Exception ex) {

@@ -109,6 +109,7 @@ class ReadingRoomServiceTest {
   void createReadingRoom_EmptyServicePointsList() {
 //   Mockito.when(readingRoomRepository.save(any())).thenReturn(IllegalArgumentException.class);
 //   assertThrows(IllegalArgumentException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
+
   }
 
   @Test

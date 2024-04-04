@@ -16,12 +16,6 @@
       <column name="reading_room_id" type="UUID">
         <constraints foreignKeyName="fk_rr_readingroom_servicepoint_id" referencedTableName="reading_room" referencedColumnNames="id"/>
       </column>
-      <column name="created_by" type="uuid"/>
-      <column name="created_date" type="timestamp without time zone" defaultValueComputed="now()">
-        <constraints nullable="false"/>
-      </column>
-      <column name="updated_by" type="uuid"/>
-      <column name="updated_date" type="timestamp without time zone"/>
     </createTable>
   </changeSet>
 

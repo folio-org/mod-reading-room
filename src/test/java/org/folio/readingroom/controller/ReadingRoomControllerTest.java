@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.ReadingRoomRepository;
@@ -37,7 +37,7 @@ class ReadingRoomControllerTest extends BaseIT {
   void testCreateReadingRoom() throws Exception {
     removeReadingRoomIfExists();
     ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
-    var servicePoints = List.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
       createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
     readingRoom.servicePoints(servicePoints);
 
@@ -63,7 +63,7 @@ class ReadingRoomControllerTest extends BaseIT {
   void testCreateReadingRoomWithInvalidScenarios() throws Exception {
     removeReadingRoomIfExists();
     ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, true);
-    readingRoom.servicePoints(List.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1)));
+    readingRoom.servicePoints(Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1)));
 
     // creating Reading room
     this.mockMvc.perform(
@@ -85,7 +85,7 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(content().string(containsString("Reading room with id " + READING_ROOM_ID + " already exists")));
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
-    readingRoom.servicePoints(List.of(createServicePoint(INVALID_SERVICE_POINT_ID, "test")));
+    readingRoom.servicePoints(Set.of(createServicePoint(INVALID_SERVICE_POINT_ID, "test")));
 
     // creating Reading room with new id but with invalid servicePoint id
     this.mockMvc.perform(
@@ -99,7 +99,7 @@ class ReadingRoomControllerTest extends BaseIT {
         "ServicePointId " + INVALID_SERVICE_POINT_ID + " doesn't exists in inventory")));
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
-    readingRoom.servicePoints(List.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+    readingRoom.servicePoints(Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
       createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2)));
 
     // creating Reading room with new id but with servicePoint id already associated to another reading room
@@ -127,7 +127,7 @@ class ReadingRoomControllerTest extends BaseIT {
 
     // creating Reading room with duplicate reading room name
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
-    readingRoom.servicePoints(List.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2)));
+    readingRoom.servicePoints(Set.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2)));
     this.mockMvc.perform(
         post("/reading-room")
           .content(asJsonString(readingRoom))

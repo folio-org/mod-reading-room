@@ -25,12 +25,8 @@ public interface ReadingRoomMapper {
   @Mapping(target = "updatedDate", ignore = true)
   ReadingRoomEntity toEntity(ReadingRoom readingRoom);
 
-  @Mapping(target = "servicePointId", source = "servicePoint.id")
-  @Mapping(target = "servicePointName", source = "servicePoint.name")
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
-  @Mapping(target = "id", source = "servicePointEntity.servicePointId")
-  @Mapping(target = "name", source = "servicePointEntity.servicePointName")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
   @Mapping(target = "metadata.createdByUserId", source = "createdBy")

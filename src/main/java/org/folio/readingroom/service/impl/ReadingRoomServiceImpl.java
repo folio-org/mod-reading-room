@@ -2,6 +2,7 @@ package org.folio.readingroom.service.impl;
 
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,8 +14,8 @@ import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
-import org.folio.readingroom.service.InventoryServicePointService;
 import org.folio.readingroom.service.ReadingRoomService;
+import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   private final ReadingRoomRepository readingRoomRepository;
   private final ReadingRoomMapper readingRoomMapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
-  private final InventoryServicePointService inventoryServicePointService;
+  private final ServicePointService servicePointService;
 
   @Override
   public ReadingRoom createReadingRoom(ReadingRoom readingRoomDto) {
@@ -45,24 +46,32 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
       });
   }
 
-  private void validateServicePoints(List<ServicePoint> servicePointDtoList) {
+  private void validateServicePoints(Set<ServicePoint> servicePointDtoList) {
     log.debug("validateServicePoints:: validating servicePoints with {}", servicePointDtoList);
     var servicePointIds = servicePointDtoList
       .stream()
       .map(ServicePoint::getId)
       .toList();
-    var invalidServicePointList = inventoryServicePointService.fetchInvalidServicePointList(servicePointIds);
-    if (!invalidServicePointList.isEmpty()) {
-      throw new ServicePointException("ServicePointId %s doesn't exists in inventory", invalidServicePointList);
-    }
+    checkInvalidServicePoints(servicePointIds);
     var existingServicePointList = rrServicePointRepository.findAllById(servicePointIds);
     if (!existingServicePointList.isEmpty()) {
       throw new ServicePointException("ServicePointId %s already associated with another Reading room",
-        existingServicePointList
-          .stream()
-          .map(ReadingRoomServicePointEntity::getServicePointId)
-          .toList());
+        getServicePointIdsFromEntities(existingServicePointList));
     }
+  }
+
+  private void checkInvalidServicePoints(List<UUID> servicePointIds) {
+    var invalidServicePointList = servicePointService.fetchInvalidServicePointList(servicePointIds);
+    if (!invalidServicePointList.isEmpty()) {
+      throw new ServicePointException("ServicePointId %s doesn't exists in inventory", invalidServicePointList);
+    }
+  }
+
+  private List<UUID> getServicePointIdsFromEntities(List<ReadingRoomServicePointEntity> servicePointEntities) {
+    return servicePointEntities
+      .stream()
+      .map(ReadingRoomServicePointEntity::getId)
+      .toList();
   }
 
 }

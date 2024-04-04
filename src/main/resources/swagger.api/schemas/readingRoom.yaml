@@ -15,6 +15,7 @@ ReadingRoom:
     servicePoints:
       description: "Service points which are associated to Reading Room"
       type: array
+      uniqueItems: true
       minItems: 1
       items:
         $ref: "servicePoint.yaml#/ServicePoint"

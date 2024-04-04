@@ -3,7 +3,7 @@ package org.folio.readingroom.service;
 import java.util.List;
 import java.util.UUID;
 
-public interface InventoryServicePointService {
+public interface ServicePointService {
 
   /**
    * Fetches a list of invalid service point IDs.

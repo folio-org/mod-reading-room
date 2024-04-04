@@ -1,15 +1,18 @@
 package org.folio.readingroom.service;
 
-import org.folio.readingroom.domain.dto.Metadata;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+
+import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
-import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
-import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
 import org.folio.readingroom.service.impl.ReadingRoomServiceImpl;
+import org.folio.readingroom.utils.HelperUtils;
 import org.folio.spring.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,20 +22,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-
 @ExtendWith(MockitoExtension.class)
 class ReadingRoomServiceTest {
+
   @Mock
   ReadingRoomRepository readingRoomRepository;
+
   @Mock
   ReadingRoomMapper readingRoomMapper;
+
   @Mock
   ReadingRoomServicePointRepository readingRoomServicePointRepository;
+
   @Mock
   InventoryServicePointService inventoryServicePointService;
 
@@ -41,31 +42,13 @@ class ReadingRoomServiceTest {
 
   ReadingRoom readingRoomDto;
   ReadingRoomEntity readingRoomEntity;
-  Metadata metadata;
   UUID uuid;
 
   @BeforeEach
   void initData() {
     uuid = UUID.randomUUID();
-    readingRoomDto = new ReadingRoom();
-    readingRoomDto.setId(uuid);
-    readingRoomDto.setName("rr-1");
-    readingRoomDto.setIspublic(true);
-    readingRoomDto.setServicePoints(new ArrayList<>());
-    metadata = new Metadata();
-    metadata.setCreatedDate("2/4/01");
-    metadata.setCreatedByUserId(UUID.randomUUID());
-    metadata.setUpdatedDate("3/4/02");
-    metadata.setUpdatedByUserId(UUID.randomUUID());
-    readingRoomDto.setMetadata(metadata);
-
-    readingRoomEntity = new ReadingRoomEntity();
-    readingRoomEntity.setId(uuid);
-    readingRoomEntity.setName("rr-1");
-    readingRoomEntity.setIspublic(true);
-    Set<ReadingRoomServicePointEntity> readingRoomServicePointEntities = new HashSet<>();
-    readingRoomEntity.setServicePoints(readingRoomServicePointEntities);
-
+    readingRoomEntity = HelperUtils.createReadingRoomEntity();
+    readingRoomDto = HelperUtils.createReadingRoom(uuid, true);
   }
 
   @Test
@@ -81,7 +64,7 @@ class ReadingRoomServiceTest {
 
   @Test
   void createReadingRoom_ReadingRoomAlreadyExists() {
-    Mockito.when(readingRoomRepository.findById(uuid)).thenThrow(ResourceAlreadyExistException.class);
+    Mockito.when(readingRoomRepository.findById(any())).thenThrow(ResourceAlreadyExistException.class);
     assertThrows(ResourceAlreadyExistException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
     Mockito.verify(readingRoomRepository).findById(uuid);
   }
@@ -102,21 +85,16 @@ class ReadingRoomServiceTest {
 
   @Test
   void createReadingRoom_DuplicateServicePointIds() {
-
-  }
-
-  @Test
-  void createReadingRoom_EmptyServicePointsList() {
-//   Mockito.when(readingRoomRepository.save(any())).thenReturn(IllegalArgumentException.class);
-//   assertThrows(IllegalArgumentException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
-
+    // Write your test case for this scenario
   }
 
   @Test
   void createReadingRoom_NullReadingRoomId() {
-
+    // Write your test case for this scenario
   }
+
   @Test
   void createReadingRoom_NullServicePointIds() {
+    // Write your test case for this scenario
   }
 }

@@ -1,8 +1,12 @@
 package org.folio.readingroom.utils;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
+import org.folio.readingroom.domain.entity.ReadingRoomEntity;
+import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 
 public class HelperUtils {
 
@@ -29,5 +33,23 @@ public class HelperUtils {
     servicePoint.setId(servicePointId);
     servicePoint.setName(servicePointName);
     return servicePoint;
+  }
+
+  public static ReadingRoomServicePointEntity createServicePointEntity(UUID servicePointId, String servicePointName) {
+    ReadingRoomServicePointEntity servicePointEntity = new ReadingRoomServicePointEntity();
+    servicePointEntity.setServicePointId(servicePointId);
+    servicePointEntity.setServicePointName(servicePointName);
+    return servicePointEntity;
+  }
+
+  public static ReadingRoomEntity createReadingRoomEntity() {
+    ReadingRoomEntity readingRoomEntity = new ReadingRoomEntity();
+    readingRoomEntity.setId(READING_ROOM_ID);
+    readingRoomEntity.setName(READING_ROOM_NAME);
+    readingRoomEntity.setIspublic(true);
+    Set<ReadingRoomServicePointEntity> servicePoints = new HashSet<>();
+    servicePoints.add(createServicePointEntity(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoomEntity.setServicePoints(servicePoints);
+    return readingRoomEntity;
   }
 }

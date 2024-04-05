@@ -15,9 +15,6 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:
       ddl-auto: none
-#      naming:
-#        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-#        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -37,18 +34,19 @@ spring:
         enabled: true
   mustache:
     check-template-location: false
-logging:
-  level:
-    _org.springframework.web.servlet.HandlerMapping.Mappings: debug
 folio:
   tenant:
     validation:
       enabled: false
+  environment: ${ENV:folio}
+  system-user:
+    enabled: false
+    password: ${SYSTEM_USER_PASSWORD:dummy} # This is not used but added to avoid DI errors from folio-spring-system-user
 management:
   endpoints:
     web:
       exposure:
-        include: info,health,env,httptrace
+        include: ${ACTUATOR_EXPOSURE:health,info,loggers}
       base-path: /admin
   #  endpoint:
   #    health:

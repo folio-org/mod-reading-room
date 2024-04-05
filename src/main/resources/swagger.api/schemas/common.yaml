@@ -13,18 +13,12 @@ Metadata:
     createdByUserId:
       $ref: "common.yaml#/uuid"
       description: ID of the user who created the record
-    createdByUsername:
-      type: string
-      description: Username of the user who created the record (when available)
     updatedDate:
       type: string
       description: Date and time when the record was last updated
     updatedByUserId:
       $ref: "common.yaml#/uuid"
       description: ID of the user who last updated the record
-    updatedByUsername:
-      type: string
-      description: Username of the user who updated the record (when available)
 
 Parameter:
   description: "List of key/value parameters of an error"

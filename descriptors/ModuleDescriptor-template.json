@@ -1,6 +1,12 @@
 {
   "id": "@artifactId@-@version@",
   "name": "Manage reading room and its related access",
+  "requires": [
+    {
+      "id": "service-points",
+      "version": "3.3"
+    }
+  ],
   "provides": [
     {
       "id": "reading-room",
@@ -9,55 +15,65 @@
         {
           "methods": ["POST"],
           "pathPattern": "/reading-room",
-          "permissionsRequired": [],
-          "modulePermissions": []
+          "permissionsRequired": [
+            "reading-room.item.post"
+          ],
+          "modulePermissions": [
+            "inventory-storage.service-points.collection.get"
+          ]
         },
         {
           "methods": ["GET"],
           "pathPattern": "/reading-room",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.collection.get"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["PUT"],
           "pathPattern": "/reading-room/{readingRoomId}",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.item.put"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["DELETE"],
           "pathPattern": "/reading-room/{readingRoomId}",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.item.delete"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["POST"],
           "pathPattern": "/reading-room/access-log",
-          "permissionsRequired": [],
+          "permissionsRequired": [
+            "reading-room.access-log.post"
+          ],
           "modulePermissions": []
         }
       ]
     },
     {
-      "id": "patron-permission",
+      "id": "reading-room-patron-permission",
       "version": "1.0",
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
-          "modulePermissions": []
-        },
-        {
-          "methods": ["POST"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
+          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "permissionsRequired": [
+            "reading-room-patron-permission.item.get"
+          ],
           "modulePermissions": []
         },
         {
           "methods": ["PUT"],
-          "pathPattern": "/patron-permission/users/{userId}",
-          "permissionsRequired": [],
+          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "permissionsRequired": [
+            "reading-room-patron-permission.item.put"
+          ],
           "modulePermissions": []
         }
       ]
@@ -78,8 +94,44 @@
       ]
     }
   ],
-  "permissionSets" : [],
-  "requires": [],
+  "permissionSets" : [
+    {
+      "permissionName": "reading-room.item.post",
+      "displayName": "creates new reading room",
+      "description": "creates new reading room"
+    },
+    {
+      "permissionName": "reading-room.item.put",
+      "displayName": "update reading room details",
+      "description": "update reading room details"
+    },
+    {
+      "permissionName": "reading-room.item.delete",
+      "displayName": "delete reading room",
+      "description": "delete reading room"
+    },
+
+    {
+      "permissionName": "reading-room.collection.get",
+      "displayName": "get reading room collection",
+      "description": "get reading room collection"
+    },
+    {
+      "permissionName": "reading-room.access-log.post",
+      "displayName": "create access log for reading room",
+      "description": "create access log for reading room"
+    },
+    {
+      "permissionName": "reading-room-patron-permission.item.get",
+      "displayName": "get patron permission of all reading rooms",
+      "description": "get patron permission of all reading rooms"
+    },
+    {
+      "permissionName": "reading-room-patron-permission.item.put",
+      "displayName": "update or create reading room patron permission",
+      "description": "update or create reading room patron permission"
+    }
+  ],
   "launchDescriptor": {
     "dockerImage": "@artifactId@:@version@",
     "dockerPull": false,

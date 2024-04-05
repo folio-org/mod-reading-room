@@ -9,3 +9,7 @@ ServicePoint:
     name:
       description: "Name of the service point"
       type: string
+  required:
+    - "id"
+    - "name"
+

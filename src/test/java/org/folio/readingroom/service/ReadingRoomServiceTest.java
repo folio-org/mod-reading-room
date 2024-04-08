@@ -6,10 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
+import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
@@ -73,7 +75,8 @@ class ReadingRoomServiceTest {
 
   @Test
   void createReadingRoom_ServicePointNotFound() {
-    when(servicePointService.fetchInvalidServicePointList(any())).thenThrow(ServicePointException.class);
+    var invalidServicePointsList = List.of(UUID.randomUUID());
+    when(servicePointService.fetchInvalidServicePointList(any())).thenReturn(invalidServicePointsList);
     assertThrows(ServicePointException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
     verify(servicePointService).fetchInvalidServicePointList(any());
 
@@ -81,9 +84,10 @@ class ReadingRoomServiceTest {
 
   @Test
   void createReadingRoom_ServicePointAlreadyAssociated() {
-    when(readingRoomServicePointRepository.findAllById(any())).thenThrow(ServicePointException.class);
+    var readingRoomServicePointEntity = new ReadingRoomServicePointEntity();
+    List<ReadingRoomServicePointEntity> existingServicePointList = List.of(readingRoomServicePointEntity);
+    when(readingRoomServicePointRepository.findAllById(any())).thenReturn(existingServicePointList);
     assertThrows(ServicePointException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
     verify(readingRoomServicePointRepository).findAllById(any());
   }
-
 }

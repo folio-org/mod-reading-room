@@ -35,7 +35,7 @@ class ServicePointServiceTest {
   }
 
   @Test
-  void fetchInvalidServicePointList_WhenAllPointsAreValid() {
+  void fetchInvalidServicePointList_WhenAllServicePointsAreValid() {
     inventoryServicePoints = Arrays.asList(
       new ServicePointClient.InventoryServicePoint(servicePointIds.get(0).toString(), "Circ-desk1"),
       new ServicePointClient.InventoryServicePoint(servicePointIds.get(1).toString(), "Online")
@@ -49,7 +49,7 @@ class ServicePointServiceTest {
   }
 
   @Test
-  void fetchInvalidServicePointList_WhenSomePointsAreInvalid() {
+  void fetchInvalidServicePointList_WhenSomeServicePointsAreInvalid() {
     inventoryServicePoints = List.of(
       new ServicePointClient.InventoryServicePoint(servicePointIds.get(0).toString(), "Circ-desk1")
     );

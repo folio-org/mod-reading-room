@@ -17,7 +17,6 @@ PatronPermission:
     readingRoomName:
       description: "Name of the reading room"
       type: string
-      format: "UUID"
     access:
       description: "A field to determine the access of a user for a reading room"
       type: string

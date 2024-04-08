@@ -1,6 +1,7 @@
 package org.folio.readingroom.utils;
 
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
 
@@ -22,6 +23,15 @@ public class HelperUtils {
     readingRoom.setName(READING_ROOM_NAME);
     readingRoom.setIspublic(ispublic);
     return readingRoom;
+  }
+
+  public static PatronPermission createPatronPermission(UUID patronPermissionId, UUID readingRoomId, UUID patronId) {
+    PatronPermission patronPermission = new PatronPermission();
+    patronPermission.id(patronPermissionId);
+    patronPermission.userId(patronId);
+    patronPermission.access(PatronPermission.AccessEnum.ALLOWED);
+    patronPermission.setNotes("Test Note");
+    return patronPermission;
   }
 
   public static ServicePoint createServicePoint(UUID servicePointId, String servicePointName) {

@@ -1,7 +1,6 @@
 package org.folio.readingroom.service.impl;
 
 import feign.FeignException;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -25,14 +24,14 @@ public class PatronPermissionsServiceImpl implements PatronPermissionsService {
 
   @Override
   public List<PatronPermission> updatePatronPermissionsByUserId(UUID patronId,
-    List<@Valid PatronPermission> patronPermissions) {
+    List<PatronPermission> patronPermissions) {
     validateUser(patronId, patronPermissions);
     List<PatronPermissionEntity> entities = readingRoomMapper.toEntityList(patronPermissions);
     patonPermissionsRepository.saveAll(entities);
     return patronPermissions;
   }
 
-  private void validateUser(UUID patronId, List<@Valid PatronPermission> patronPermissions) {
+  private void validateUser(UUID patronId, List<PatronPermission> patronPermissions) {
     boolean anyInvalid = patronPermissions.stream()
       .anyMatch(permission -> !patronId.equals(permission.getUserId()));
     if (anyInvalid) {

@@ -7,7 +7,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import org.folio.readingroom.domain.base.AuditableEntity;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"servicePoints", "patronPermissions"})
+@ToString(exclude = {"servicePoints"})
 @Table(name = "reading_room")
 public class ReadingRoomEntity extends AuditableEntity {
 
@@ -33,5 +32,5 @@ public class ReadingRoomEntity extends AuditableEntity {
   @OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
     mappedBy = "readingRoom")
-  private Set<ReadingRoomServicePointEntity> servicePoints = new LinkedHashSet<>();
+  private Set<ReadingRoomServicePointEntity> servicePoints;
 }

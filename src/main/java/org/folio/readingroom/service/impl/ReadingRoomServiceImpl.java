@@ -16,7 +16,7 @@ import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
-import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.readingroom.service.converter.Mapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   private final ReadingRoomRepository readingRoomRepository;
-  private final ReadingRoomMapper readingRoomMapper;
+  private final Mapper readingRoomMapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
   private final ServicePointService servicePointService;
 

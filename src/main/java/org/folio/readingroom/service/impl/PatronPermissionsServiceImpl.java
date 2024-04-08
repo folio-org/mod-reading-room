@@ -2,6 +2,8 @@ package org.folio.readingroom.service.impl;
 
 import feign.FeignException;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.client.feign.UsersClient;
@@ -10,22 +12,20 @@ import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.exception.PatronPermissionsException;
 import org.folio.readingroom.repository.PatonPermissionsRepository;
 import org.folio.readingroom.service.PatronPermissionsService;
-import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.readingroom.service.converter.Mapper;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 @Log4j2
 public class PatronPermissionsServiceImpl implements PatronPermissionsService {
   private final PatonPermissionsRepository patonPermissionsRepository;
-  private final ReadingRoomMapper readingRoomMapper;
+  private final Mapper readingRoomMapper;
   private final UsersClient usersClient;
 
   @Override
-  public List<PatronPermission> updatePatronPermissionsByUserId(UUID patronId, List<@Valid PatronPermission> patronPermissions) {
+  public List<PatronPermission> updatePatronPermissionsByUserId(UUID patronId,
+    List<@Valid PatronPermission> patronPermissions) {
     validateUser(patronId, patronPermissions);
     List<PatronPermissionEntity> entities = readingRoomMapper.toEntityList(patronPermissions);
     patonPermissionsRepository.saveAll(entities);

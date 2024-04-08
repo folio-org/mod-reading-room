@@ -1,5 +1,14 @@
 package org.folio.readingroom.controller;
 
+import static org.folio.readingroom.utils.HelperUtils.createPatronPermission;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+import java.util.UUID;
 import org.folio.readingroom.client.feign.UsersClient;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
@@ -10,16 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
-import java.util.Collections;
-import java.util.UUID;
-
-import static org.folio.readingroom.utils.HelperUtils.createPatronPermission;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PatronPermissionControllerTest extends BaseIT {
 

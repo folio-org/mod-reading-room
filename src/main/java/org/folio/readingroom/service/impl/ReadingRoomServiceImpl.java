@@ -57,8 +57,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
         new NotFoundException(String.format("Reading room with id %s doesn't exists", readingRoomId)));
     validateServicePoints(readingRoomDto.getServicePoints(), readingRoomId);
     updateModifiedFields(existingEntity, readingRoomMapper.toEntity(readingRoomDto));
-    ReadingRoomEntity readingRoomEntity = readingRoomRepository.save(existingEntity);
-    return readingRoomMapper.toDto(readingRoomEntity);
+    return readingRoomMapper.toDto(readingRoomRepository.save(existingEntity));
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

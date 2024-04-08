@@ -192,27 +192,19 @@ class ReadingRoomControllerTest extends BaseIT {
       createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
     readingRoom.setServicePoints(servicePoints);
 
+    // creating reading room with 2 service points
     this.mockMvc.perform(
         post("/reading-room")
           .content(asJsonString(readingRoom))
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().isCreated())
-      .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
-      .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
-      .andExpect(jsonPath("$.ispublic").value(true))
-      .andExpect(jsonPath("$.servicePoints").isArray())
-      .andExpect(jsonPath("$.servicePoints", hasSize(2)))
-      .andExpect(jsonPath("$.servicePoints[*].id",
-        containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
-      .andExpect(jsonPath("$.servicePoints[*].name",
-        containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
+      .andExpect(status().isCreated());
 
     readingRoom = createReadingRoom(READING_ROOM_ID, false);
     servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, "test"));
     readingRoom.servicePoints(servicePoints);
-
+    // updating reading room by updating service point's name and deleting 1 service point
     this.mockMvc.perform(
         put("/reading-room/" + READING_ROOM_ID)
           .content(asJsonString(readingRoom))
@@ -227,6 +219,30 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(jsonPath("$.servicePoints", hasSize(1)))
       .andExpect(jsonPath("$.servicePoints[0].id").value(SERVICE_POINT_ID1.toString()))
       .andExpect(jsonPath("$.servicePoints[0].name").value("test"));
+
+    // updating reading room by changing name and ispublic and also adding new servicePoint
+    readingRoom = createReadingRoom(READING_ROOM_ID, true);
+    readingRoom.setName("test");
+    servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom.servicePoints(servicePoints);
+
+    this.mockMvc.perform(
+        put("/reading-room/" + READING_ROOM_ID)
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
+      .andExpect(jsonPath("$.name").value("test"))
+      .andExpect(jsonPath("$.ispublic").value(true))
+      .andExpect(jsonPath("$.servicePoints").isArray())
+      .andExpect(jsonPath("$.servicePoints", hasSize(2)))
+      .andExpect(jsonPath("$.servicePoints[*].id",
+        containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
+      .andExpect(jsonPath("$.servicePoints[*].name",
+        containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
   @Test
@@ -235,6 +251,17 @@ class ReadingRoomControllerTest extends BaseIT {
     var readingRoom1 = createReadingRoom(READING_ROOM_ID, true);
     var servicePoints1 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
     readingRoom1.servicePoints(servicePoints1);
+
+    // Try to update reading room which is not exists
+    this.mockMvc.perform(
+        put("/reading-room/" + READING_ROOM_ID)
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(404))
+      .andExpect(content().string(containsString(
+        "Reading room with id " + READING_ROOM_ID + " doesn't exists")));
 
     this.mockMvc.perform(
         post("/reading-room")
@@ -284,6 +311,18 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
         "ServicePointId " + INVALID_SERVICE_POINT_ID + " doesn't exists in inventory")));
+
+    // Try to update reading room with invalid id in path param
+    this.mockMvc.perform(
+        put("/reading-room/" + UUID.randomUUID())
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(422))
+      .andExpect(content().string(containsString(
+        "The ID provided in the request URL does not match the ID of the resource in the request body")));
+
   }
 
   private void removeReadingRoomIfExists() {

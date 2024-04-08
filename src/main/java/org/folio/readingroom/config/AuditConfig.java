@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Configuration
 @EnableJpaAuditing(modifyOnCreate = false)
 @RequiredArgsConstructor
-public class JpaAuditingConfig implements AuditorAware<UUID> {
+public class AuditConfig implements AuditorAware<UUID> {
 
   private final FolioExecutionContext folioExecutionContext;
 

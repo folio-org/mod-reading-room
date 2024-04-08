@@ -19,10 +19,11 @@ import lombok.ToString;
 public class ReadingRoomServicePointEntity {
 
   @Id
-  @Column(nullable = false)
-  private UUID servicePointId;
+  @Column(name = "service_point_id", nullable = false)
+  private UUID id;
 
-  private String servicePointName;
+  @Column(name = "service_point_name")
+  private String name;
 
   @ManyToOne
   @JoinColumn(name = "reading_room_id", nullable = false)

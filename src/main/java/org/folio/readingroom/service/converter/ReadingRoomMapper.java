@@ -1,12 +1,8 @@
 package org.folio.readingroom.service.converter;
 
-import java.util.List;
 import java.util.Optional;
-
-import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
-import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.mapstruct.AfterMapping;

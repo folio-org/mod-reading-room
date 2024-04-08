@@ -18,7 +18,7 @@ public class ReadingRoomController implements ReadingRoomApi {
 
   @Override
   public ResponseEntity<ReadingRoom> createReadingRoom(ReadingRoom readingRoom) {
-    log.info("createReadingRoom:: creating reading room with name {}, id {}",
+    log.info("createReadingRoom:: creating reading room with id {}, name {}",
       readingRoom.getId(), readingRoom.getName());
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(readingRoomService.createReadingRoom(readingRoom));

@@ -9,6 +9,8 @@ ServicePoint:
     name:
       description: "Name of the service point"
       type: string
+      minLength: 1
+      maxLength: 20
   required:
     - "id"
     - "name"

@@ -129,7 +129,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "name size must be between 1 and 20")));
+        "name size must be between 1 and 2147483647")));
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
     var servicePoint = createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1);
@@ -145,7 +145,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "servicePoints[].name size must be between 1 and 20")));
+        "name size must be between 1 and 2147483647")));
 
 
     // creating Reading room without servicePoints
@@ -158,7 +158,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "servicePoints size must be between 1 and 20")));
+        "servicePoints size must be between 1 and 2147483647")));
 
     // creating Reading room with duplicate reading room name
     readingRoom = createReadingRoom(UUID.randomUUID(), true);

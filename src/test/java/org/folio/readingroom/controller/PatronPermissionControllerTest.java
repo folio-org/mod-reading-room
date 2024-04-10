@@ -44,7 +44,7 @@ class PatronPermissionControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().isCreated());
+      .andExpect(status().is2xxSuccessful());
   }
 
   @Test

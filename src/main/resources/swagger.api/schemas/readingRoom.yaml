@@ -10,7 +10,6 @@ ReadingRoom:
       description: "Name of the reading room"
       type: string
       minLength: 1
-      maxLength: 20
     ispublic:
       description: "A flag to determine whether a reading room is public or not"
       type: boolean
@@ -19,7 +18,6 @@ ReadingRoom:
       type: array
       uniqueItems: true
       minItems: 1
-      maxItems: 20
       items:
         $ref: "servicePoint.yaml#/ServicePoint"
     metadata:

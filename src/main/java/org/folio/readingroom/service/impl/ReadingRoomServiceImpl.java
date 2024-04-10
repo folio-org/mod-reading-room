@@ -49,7 +49,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   @Override
   public ReadingRoom updateReadingRoom(UUID readingRoomId, ReadingRoom readingRoomDto) {
-    log.debug("updateReadingRoom:: creating reading room with {}", readingRoomDto);
+    log.debug("updateReadingRoom:: updating reading room with {}", readingRoomDto);
     if (!readingRoomId.equals(readingRoomDto.getId())) {
       throw new IdMismatchException(
         "The ID provided in the request URL does not match the ID of the resource in the request body");

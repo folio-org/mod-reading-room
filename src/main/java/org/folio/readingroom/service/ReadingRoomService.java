@@ -2,6 +2,7 @@ package org.folio.readingroom.service;
 
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 
 public interface ReadingRoomService {
 
@@ -21,5 +22,7 @@ public interface ReadingRoomService {
    * @return The newly updated {@code ReadingRoom} object.
    */
   ReadingRoom updateReadingRoom(UUID readingRoomId, ReadingRoom readingRoom);
+
+  ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit);
 
 }

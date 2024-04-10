@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
@@ -23,6 +24,7 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.spring.data.OffsetRequest;
 import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +60,20 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     validateServicePoints(readingRoomDto.getServicePoints(), readingRoomId);
     updateModifiedFields(existingEntity, readingRoomMapper.toEntity(readingRoomDto));
     return readingRoomMapper.toDto(readingRoomRepository.save(existingEntity));
+  }
+
+  @Override
+  public ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit) {
+    log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, limit {}",
+      query, offset, limit);
+    List<ReadingRoom> readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit))
+      .stream()
+      .map(readingRoomMapper::toDto)
+      .toList();
+    var readingRoomCollection = new ReadingRoomCollection();
+    readingRoomCollection.setReadingRooms(readingRooms);
+    readingRoomCollection.setTotalRecords(readingRooms.size());
+    return readingRoomCollection;
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

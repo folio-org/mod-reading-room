@@ -9,6 +9,7 @@ ReadingRoom:
     name:
       description: "Name of the reading room"
       type: string
+      minLength: 1
     ispublic:
       description: "A flag to determine whether a reading room is public or not"
       type: boolean

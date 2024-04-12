@@ -14,6 +14,7 @@ public class HelperUtils {
 
   public static final UUID SERVICE_POINT_ID1 = UUID.fromString("7c5abc9f-f3d7-4856-b8d7-6712462ca008");
   public static final UUID SERVICE_POINT_ID2 = UUID.fromString("9765c56f-608d-4c93-94fe-f365f16e6970");
+  public static final UUID SERVICE_POINT_ID3 = UUID.fromString("9765c56f-608d-4c93-94fe-f365f16e6971");
   public static final UUID INVALID_SERVICE_POINT_ID = UUID.fromString("7c5abc9f-f3d7-4856-b8d7-6712462ca009");
 
   public static final String READING_ROOM_NAME = "readingRoom1";

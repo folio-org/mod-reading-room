@@ -26,7 +26,7 @@ ReadingRoom:
   required:
     - "id"
     - "name"
-    - "ispublic"
+    - "isPublic"
     - "servicePoints"
 
 ReadingRoomCollection:

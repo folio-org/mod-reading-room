@@ -30,6 +30,8 @@ public class ReadingRoomEntity extends AuditableEntity {
 
   private boolean ispublic;
 
+  private boolean deleted;
+
   @OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
     mappedBy = "readingRoom",

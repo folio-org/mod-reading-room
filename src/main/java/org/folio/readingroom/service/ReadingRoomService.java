@@ -23,6 +23,14 @@ public interface ReadingRoomService {
    */
   ReadingRoom updateReadingRoom(UUID readingRoomId, ReadingRoom readingRoom);
 
+  /**
+   * Retrieves a collection of reading rooms based on the given CQL.
+   *
+   * @param query  - The CQL query used to filter the reading rooms.
+   * @param offset - The offset for pagination, indicating the starting index of the result set.
+   * @param limit -  The maximum number of reading rooms to retrieve.
+   * @return A ReadingRoomCollection {@code ReadingRoomCollection} that match the specified CQL query.
+   */
   ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit);
 
 }

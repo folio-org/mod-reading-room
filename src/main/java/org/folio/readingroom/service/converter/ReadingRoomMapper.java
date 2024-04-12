@@ -1,7 +1,9 @@
 package org.folio.readingroom.service.converter;
 
+import java.util.List;
 import java.util.Optional;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
@@ -12,12 +14,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring",
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   unmappedTargetPolicy = ReportingPolicy.IGNORE,
   builder = @Builder(disableBuilder = true))
 public interface ReadingRoomMapper {
+
+  List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
 
   @Mapping(target = "createdBy", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
@@ -33,7 +38,18 @@ public interface ReadingRoomMapper {
   @Mapping(target = "metadata.createdDate", source = "createdDate")
   @Mapping(target = "metadata.updatedByUserId", source = "updatedBy")
   @Mapping(target = "metadata.updatedDate", source = "updatedDate")
-  org.folio.readingroom.domain.dto.ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
+  ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
+
+  default ReadingRoomCollection toDto(Page<ReadingRoomEntity> readingRoomEntityPage, boolean includeDeleted) {
+    var readingRooms = readingRoomEntityPage.getContent();
+    if (!includeDeleted) {
+      readingRooms = readingRooms
+        .stream()
+        .filter(readingRoom -> !readingRoom.isDeleted())
+        .toList();
+    }
+    return new ReadingRoomCollection(toDtoList(readingRooms), readingRoomEntityPage.getNumberOfElements());
+  }
 
   @AfterMapping
   default void setReadingRoom(@MappingTarget ReadingRoomEntity readingRoomEntity) {

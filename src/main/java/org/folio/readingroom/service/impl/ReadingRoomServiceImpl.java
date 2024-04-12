@@ -66,14 +66,12 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   public ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit) {
     log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, limit {}",
       query, offset, limit);
-    List<ReadingRoom> readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit))
-      .stream()
-      .map(readingRoomMapper::toDto)
-      .toList();
-    var readingRoomCollection = new ReadingRoomCollection();
-    readingRoomCollection.setReadingRooms(readingRooms);
-    readingRoomCollection.setTotalRecords(readingRooms.size());
-    return readingRoomCollection;
+    var readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit));
+    return readingRoomMapper.toDto(readingRooms, containsIsDeletedFilter(query));
+  }
+
+  private boolean containsIsDeletedFilter(String query) {
+    return query != null && query.contains("isDeleted=*");
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

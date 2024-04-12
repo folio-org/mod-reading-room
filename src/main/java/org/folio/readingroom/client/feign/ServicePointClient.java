@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ServicePointClient {
 
   @GetMapping("?query=id==({servicePointId})")
-  ResultList<InventoryServicePoint> getServicePointByName(@PathVariable("servicePointId") String servicePointId);
+  ResultList<InventoryServicePoint> getServicePointsByIds(@PathVariable("servicePointId") String servicePointId);
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   record InventoryServicePoint(String id, String name){}

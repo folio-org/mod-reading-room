@@ -1,5 +1,6 @@
 package org.folio.readingroom.controller;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.ReadingRoom;
@@ -8,6 +9,7 @@ import org.folio.readingroom.service.ReadingRoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @AllArgsConstructor
@@ -24,4 +26,10 @@ public class ReadingRoomController implements ReadingRoomApi {
       .body(readingRoomService.createReadingRoom(readingRoom));
   }
 
+  @Override
+  public ResponseEntity<Void> deleteReadingRoomById(UUID readingRoomId) {
+    log.info("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
+    readingRoomService.deleteReadingRoomById(readingRoomId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

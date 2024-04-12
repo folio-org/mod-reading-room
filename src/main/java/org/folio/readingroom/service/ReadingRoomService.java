@@ -1,5 +1,6 @@
 package org.folio.readingroom.service;
 
+import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 
 public interface ReadingRoomService {
@@ -11,4 +12,6 @@ public interface ReadingRoomService {
    * @return The newly created {@code ReadingRoom} object.
    */
   ReadingRoom createReadingRoom(ReadingRoom readingRoom);
+
+  void deleteReadingRoomById(UUID readingRoomId);
 }

@@ -17,6 +17,7 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,6 +37,17 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     validateServicePoints(readingRoomDto.getServicePoints());
     ReadingRoomEntity readingRoomEntity = readingRoomRepository.save(readingRoomMapper.toEntity(readingRoomDto));
     return readingRoomMapper.toDto(readingRoomEntity);
+  }
+
+  @Override
+  public void deleteReadingRoomById(UUID readingRoomId) {
+    log.debug("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
+    readingRoomRepository.findById(readingRoomId).ifPresentOrElse(readingRoom -> {
+      readingRoom.setIsdeleted(true);
+      readingRoomRepository.save(readingRoom);
+    }, () -> {
+      throw new NotFoundException("Reading room with id " + readingRoomId + " does not exist");
+    });
   }
 
   private void validateReadingRoom(UUID readingRoomId) {

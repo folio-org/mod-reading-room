@@ -28,6 +28,7 @@ public class HelperUtils {
   public static PatronPermission createPatronPermission(UUID patronPermissionId, UUID readingRoomId, UUID patronId) {
     PatronPermission patronPermission = new PatronPermission();
     patronPermission.id(patronPermissionId);
+    patronPermission.setReadingRoomId(readingRoomId);
     patronPermission.userId(patronId);
     patronPermission.access(PatronPermission.AccessEnum.ALLOWED);
     patronPermission.setNotes("Test Note");

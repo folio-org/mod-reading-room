@@ -1,17 +1,22 @@
 package org.folio.readingroom.controller;
 
+import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
+import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID1;
+import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID2;
+import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME1;
+import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME2;
 import static org.folio.readingroom.utils.HelperUtils.createPatronPermission;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.folio.readingroom.utils.HelperUtils.createReadingRoom;
+import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.client.feign.UsersClient;
 import org.folio.readingroom.domain.dto.PatronPermission;
-import org.folio.readingroom.domain.entity.PatronPermissionEntity;
+import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.PatonPermissionsRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
@@ -33,13 +38,23 @@ class PatronPermissionControllerTest extends BaseIT {
 
   @Test
   void testSuccessUpdatePatronPermission() throws Exception {
-    PatronPermission patronPermission = createPatronPermission(UUID.randomUUID(),
-      UUID.randomUUID(), UUID.fromString("2205005b-ca51-4a04-87fd-938eefa8f6df"));
-    doNothing().when(usersClient).getUserById("2205005b-ca51-4a04-87fd-938eefa8f6df");
-    when(patonPermissionsRepository.saveAll(anyList()))
-      .thenReturn(Collections.singletonList(new PatronPermissionEntity()));
+    ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom.servicePoints(servicePoints);
+
     this.mockMvc.perform(
-        put("/reading-room-patron-permission/2205005b-ca51-4a04-87fd-938eefa8f6df")
+      post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    PatronPermission patronPermission = createPatronPermission(UUID.randomUUID(),
+      READING_ROOM_ID, UUID.fromString("2205005b-ca51-4a04-87fd-938eefa8f6df"));
+    this.mockMvc.perform(
+      put("/reading-room-patron-permission/2205005b-ca51-4a04-87fd-938eefa8f6df")
           .content(asJsonString(patronPermission))
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)

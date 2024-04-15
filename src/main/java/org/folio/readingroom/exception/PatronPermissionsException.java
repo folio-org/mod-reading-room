@@ -5,5 +5,4 @@ public class PatronPermissionsException extends RuntimeException {
   public PatronPermissionsException(String errorMsg) {
     super(errorMsg);
   }
-
 }

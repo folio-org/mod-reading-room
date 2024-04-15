@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class PatronPermissionsServiceImpl implements PatronPermissionsService {
   private final PatonPermissionsRepository patonPermissionsRepository;
-  private final Mapper readingRoomMapper;
+  private final Mapper mapper;
   private final UserService userService;
 
   @Override
   public List<PatronPermission> updatePatronPermissionsByUserId(UUID patronId,
     List<PatronPermission> patronPermissions) {
     userService.validatePatron(patronId, patronPermissions);
-    List<PatronPermissionEntity> entities = readingRoomMapper.toEntityList(patronPermissions);
+    List<PatronPermissionEntity> entities = mapper.toEntityList(patronPermissions);
     patonPermissionsRepository.saveAll(entities);
     return patronPermissions;
   }

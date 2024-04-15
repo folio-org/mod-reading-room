@@ -78,7 +78,9 @@
           "permissionsRequired": [
             "reading-room-patron-permission.item.put"
           ],
-          "modulePermissions": []
+          "modulePermissions": [
+            "users.item.get"
+          ]
         }
       ]
     },

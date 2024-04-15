@@ -1,5 +1,6 @@
 package org.folio.readingroom.controller;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.ReadingRoom;
@@ -22,6 +23,14 @@ public class ReadingRoomController implements ReadingRoomApi {
       readingRoom.getId(), readingRoom.getName());
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(readingRoomService.createReadingRoom(readingRoom));
+  }
+
+  @Override
+  public ResponseEntity<ReadingRoom> updateReadingRoomById(UUID readingRoomId, ReadingRoom readingRoom) {
+    log.info("updateReadingRoomById:: updating reading room with id {}, name {}",
+      readingRoom.getId(), readingRoom.getName());
+    return ResponseEntity.status(HttpStatus.OK)
+      .body(readingRoomService.updateReadingRoom(readingRoomId, readingRoom));
   }
 
 }

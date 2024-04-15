@@ -13,6 +13,7 @@ import java.util.Objects;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.Error;
 import org.folio.readingroom.domain.dto.Errors;
+import org.folio.readingroom.exception.IdMismatchException;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.utils.ErrorHelper;
@@ -116,6 +117,13 @@ public class ExceptionHandlingController {
     return new Errors()
       .errors(errorList)
       .totalRecords(errorList.size());
+  }
+
+  @ExceptionHandler(IdMismatchException.class)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  public Errors handleIdMismatchException(IdMismatchException ex) {
+    logExceptionMessage(ex);
+    return createExternalError(ex.getMessage(), VALIDATION_ERROR);
   }
 
   private void logExceptionMessage(Exception ex) {

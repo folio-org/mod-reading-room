@@ -5,6 +5,10 @@
     {
       "id": "service-points",
       "version": "3.3"
+    },
+    {
+      "id": "users",
+      "version": "19.0"
     }
   ],
   "provides": [
@@ -62,7 +66,7 @@
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "pathPattern": "/reading-room-patron-permission/{patronId}",
           "permissionsRequired": [
             "reading-room-patron-permission.item.get"
           ],
@@ -70,11 +74,13 @@
         },
         {
           "methods": ["PUT"],
-          "pathPattern": "/reading-room-patron-permission/users/{userId}",
+          "pathPattern": "/reading-room-patron-permission/{patronId}",
           "permissionsRequired": [
             "reading-room-patron-permission.item.put"
           ],
-          "modulePermissions": []
+          "modulePermissions": [
+            "users.item.get"
+          ]
         }
       ]
     },

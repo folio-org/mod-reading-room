@@ -50,7 +50,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().isCreated())
+        .andExpect(status().isCreated())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
       .andExpect(jsonPath("$.ispublic").value(false))

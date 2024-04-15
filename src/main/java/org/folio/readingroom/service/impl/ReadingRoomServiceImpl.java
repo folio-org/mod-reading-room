@@ -23,7 +23,6 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.service.converter.Mapper;
-import org.folio.readingroom.service.converter.ReadingRoomMapper;
 import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 

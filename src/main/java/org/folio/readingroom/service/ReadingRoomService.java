@@ -13,5 +13,15 @@ public interface ReadingRoomService {
    */
   ReadingRoom createReadingRoom(ReadingRoom readingRoom);
 
+  /**
+   * update existing {@code ReadingRoom} entity based on the provided {@code ReadingRoom} object.
+   *
+   * @param readingRoomId - id of the reading room
+   * @param readingRoom - ReadingRoom
+   * @return The newly updated {@code ReadingRoom} object.
+   */
+  ReadingRoom updateReadingRoom(UUID readingRoomId, ReadingRoom readingRoom);
+
+
   void deleteReadingRoomById(UUID readingRoomId);
 }

@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @AllArgsConstructor
 @Log4j2
@@ -24,6 +23,14 @@ public class ReadingRoomController implements ReadingRoomApi {
       readingRoom.getId(), readingRoom.getName());
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(readingRoomService.createReadingRoom(readingRoom));
+  }
+
+  @Override
+  public ResponseEntity<ReadingRoom> updateReadingRoomById(UUID readingRoomId, ReadingRoom readingRoom) {
+    log.info("updateReadingRoomById:: updating reading room with id {}, name {}",
+      readingRoom.getId(), readingRoom.getName());
+    return ResponseEntity.status(HttpStatus.OK)
+      .body(readingRoomService.updateReadingRoom(readingRoomId, readingRoom));
   }
 
   @Override

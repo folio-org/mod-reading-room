@@ -30,7 +30,8 @@ public class ReadingRoomEntity extends AuditableEntity {
 
   private boolean ispublic;
 
-  private boolean deleted;
+  @Column(name = "is_deleted")
+  private boolean isDeleted;
 
   @OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,

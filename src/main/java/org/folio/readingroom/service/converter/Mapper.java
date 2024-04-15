@@ -30,8 +30,6 @@ public interface Mapper {
   @Mapping(target = "readingRoom.id", source = "patronPermission.readingRoomId")
   PatronPermissionEntity toEntity(PatronPermission patronPermission);
 
-  List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
-
   @Mapping(target = "createdBy", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
@@ -39,6 +37,8 @@ public interface Mapper {
   ReadingRoomEntity toEntity(ReadingRoom readingRoom);
 
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
+
+  List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
 
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 

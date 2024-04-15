@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.repository.PatronPermissionsRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ class ReadingRoomControllerTest extends BaseIT {
 
   @Autowired
   private ReadingRoomRepository readingRoomRepository;
+  @Autowired
+  private PatronPermissionsRepository patronPermissionsRepository;
   @Autowired
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
 
@@ -414,6 +417,7 @@ class ReadingRoomControllerTest extends BaseIT {
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
+      patronPermissionsRepository.deleteAll();
       readingRoomRepository.deleteAll();
     });
   }

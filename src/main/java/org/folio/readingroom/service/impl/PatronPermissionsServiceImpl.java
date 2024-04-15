@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
-import org.folio.readingroom.repository.PatonPermissionsRepository;
+import org.folio.readingroom.repository.PatronPermissionsRepository;
 import org.folio.readingroom.service.PatronPermissionsService;
 import org.folio.readingroom.service.UserService;
 import org.folio.readingroom.service.converter.Mapper;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Log4j2
 public class PatronPermissionsServiceImpl implements PatronPermissionsService {
-  private final PatonPermissionsRepository patonPermissionsRepository;
+  private final PatronPermissionsRepository patronPermissionsRepository;
   private final Mapper mapper;
   private final UserService userService;
 
@@ -25,7 +25,7 @@ public class PatronPermissionsServiceImpl implements PatronPermissionsService {
     List<PatronPermission> patronPermissions) {
     userService.validatePatron(patronId, patronPermissions);
     List<PatronPermissionEntity> entities = mapper.toEntityList(patronPermissions);
-    patonPermissionsRepository.saveAll(entities);
+    patronPermissionsRepository.saveAll(entities);
     return patronPermissions;
   }
 }

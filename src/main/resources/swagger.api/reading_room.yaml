@@ -13,6 +13,7 @@ paths:
         - $ref: '#/components/parameters/cqlQuery'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/includeDeleted'
       responses:
         '200':
           description: Reading room retrieved successfully
@@ -185,4 +186,12 @@ components:
         maximum: 2147483647
       required: false
       description: Limit the number of elements returned in the response
+    includeDeleted:
+      name: includeDeleted
+      in: query
+      schema:
+        type: boolean
+        default: false
+      required: false
+      description: Flag to include the deleted records
 

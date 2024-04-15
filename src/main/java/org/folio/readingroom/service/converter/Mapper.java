@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
@@ -14,6 +15,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.data.domain.Page;
 
 @org.mapstruct.Mapper(componentModel = "spring",
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
@@ -36,13 +38,26 @@ public interface Mapper {
 
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
+  List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
+
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
   @Mapping(target = "metadata.createdByUserId", source = "createdBy")
   @Mapping(target = "metadata.createdDate", source = "createdDate")
   @Mapping(target = "metadata.updatedByUserId", source = "updatedBy")
   @Mapping(target = "metadata.updatedDate", source = "updatedDate")
-  org.folio.readingroom.domain.dto.ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
+  ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
+
+  default ReadingRoomCollection toDto(Page<ReadingRoomEntity> readingRoomEntityPage, boolean includeDeleted) {
+    var readingRooms = readingRoomEntityPage.getContent();
+    if (!includeDeleted) {
+      readingRooms = readingRooms
+        .stream()
+        .filter(readingRoom -> !readingRoom.isDeleted())
+        .toList();
+    }
+    return new ReadingRoomCollection(toDtoList(readingRooms), readingRooms.size());
+  }
 
   @AfterMapping
   default void setReadingRoom(@MappingTarget ReadingRoomEntity readingRoomEntity) {

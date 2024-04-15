@@ -35,11 +35,12 @@ public class ReadingRoomController implements ReadingRoomApi {
   }
 
   @Override
-  public ResponseEntity<ReadingRoomCollection> getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit) {
-    log.info("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, limit {}",
-      query, offset, limit);
+  public ResponseEntity<ReadingRoomCollection> getReadingRoomsByCqlQuery(String query, Integer offset,
+                                                                         Integer limit, Boolean includeDeleted) {
+    log.info("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, "
+      + "offset {}, limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
     return ResponseEntity.status(HttpStatus.OK)
-      .body(readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit));
+      .body(readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit, includeDeleted));
   }
 
 }

@@ -29,8 +29,9 @@ public interface ReadingRoomService {
    * @param query  - The CQL query used to filter the reading rooms.
    * @param offset - The offset for pagination, indicating the starting index of the result set.
    * @param limit -  The maximum number of reading rooms to retrieve.
+   * @param includeDeleted - Flag to include the deleted records
    * @return A ReadingRoomCollection {@code ReadingRoomCollection} that match the specified CQL query.
    */
-  ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit);
+  ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit, Boolean includeDeleted);
 
 }

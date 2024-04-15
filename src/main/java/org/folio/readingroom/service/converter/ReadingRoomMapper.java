@@ -48,7 +48,7 @@ public interface ReadingRoomMapper {
         .filter(readingRoom -> !readingRoom.isDeleted())
         .toList();
     }
-    return new ReadingRoomCollection(toDtoList(readingRooms), readingRoomEntityPage.getNumberOfElements());
+    return new ReadingRoomCollection(toDtoList(readingRooms), readingRooms.size());
   }
 
   @AfterMapping

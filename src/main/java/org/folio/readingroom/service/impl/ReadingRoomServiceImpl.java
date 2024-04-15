@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class ReadingRoomServiceImpl implements ReadingRoomService {
 
-  private static final String INCLUDE_DELETED_RECORDS = "isDeleted=*";
   private final ReadingRoomRepository readingRoomRepository;
   private final ReadingRoomMapper readingRoomMapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
@@ -64,12 +63,10 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   }
 
   @Override
-  public ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit) {
-    log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, limit {}",
-      query, offset, limit);
-    var includeDeleted = query.contains(INCLUDE_DELETED_RECORDS);
-    // remove the includeDeletedRecord string from cql, deleted records can be included in response through code.
-    query = includeDeleted ? query.replace(INCLUDE_DELETED_RECORDS, "") : query;
+  public ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit,
+                                                         Boolean includeDeleted) {
+    log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, "
+      + "limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
     var readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit));
     return readingRoomMapper.toDto(readingRooms, includeDeleted);
   }

@@ -45,5 +45,7 @@
       <column name="updated_date" type="timestamp without time zone"/>
     </createTable>
   </changeSet>
-
+  <changeSet id="addUniqueConstraint" author="singhAdesh">
+    <addUniqueConstraint columnNames="user_id, reading_room_id" constraintName="unique_user_reading_room" tableName="patron_permission"/>
+  </changeSet>
 </databaseChangeLog>

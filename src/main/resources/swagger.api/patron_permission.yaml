@@ -20,23 +20,9 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
-    post:
-      summary: create list of patron permissions based on userId
-      operationId: createPatronPermissionsByUserId
-      requestBody:
-        $ref: '#/components/requestBodies/patronPermissionBody'
-      responses:
-        '201':
-          $ref: '#/components/responses/patronPermissionObjectResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
     put:
       summary: update list of patron permissions based on userId
-      operationId: updatePatronPermissionsByUserId
+      operationId: UpdatePatronReadingRoomPermission
       requestBody:
         $ref: '#/components/requestBodies/patronPermissionBody'
       responses:

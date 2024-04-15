@@ -1,23 +1,32 @@
 package org.folio.readingroom.service.converter;
 
+import java.util.List;
 import java.util.Optional;
+import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
+import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",
+@org.mapstruct.Mapper(componentModel = "spring",
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   unmappedTargetPolicy = ReportingPolicy.IGNORE,
   builder = @Builder(disableBuilder = true))
-public interface ReadingRoomMapper {
+public interface Mapper {
+
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "createdDate", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "updatedDate", ignore = true)
+  @Mapping(target = "readingRoom.id", source = "patronPermission.readingRoomId")
+  PatronPermissionEntity toEntity(PatronPermission patronPermission);
 
   @Mapping(target = "createdBy", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
@@ -40,4 +49,6 @@ public interface ReadingRoomMapper {
     Optional.ofNullable(readingRoomEntity.getServicePoints())
       .ifPresent(spEntities -> spEntities.forEach(spEntity -> spEntity.setReadingRoom(readingRoomEntity)));
   }
+
+  List<PatronPermissionEntity> toEntityList(List<PatronPermission> patronPermissions);
 }

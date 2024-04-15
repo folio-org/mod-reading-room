@@ -45,6 +45,4 @@ public class ReadingRoomEntity extends AuditableEntity {
     readingRoomServicePointEntity.setReadingRoom(this);
     this.servicePoints.add(readingRoomServicePointEntity);
   }
-
 }
-

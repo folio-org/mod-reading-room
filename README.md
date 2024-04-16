@@ -29,16 +29,16 @@ APIs for managing reading room and its related access.
 
 dcb API provides the following URLs:
 
-| Method | URL                                             | Permissions | Description                                                                         |
-|--------|-------------------------------------------------|-------------|-------------------------------------------------------------------------------------|
-| GET    | /reading-room                                   |             | Get list of reading rooms based on Cql query                                |
-| POST   | /reading-room                                   |             | create a new reading room                                                             |
-| PUT    | /reading-room/{readingRoomId}                   |             | Update reading room details |
-| DELETE | /reading-room/{readingRoomId}                   |             | Delete reading room |
-| POST   | /reading-room/{readingRoomId}/access-log        |             | create a access log for reading room |
-| GET    | /reading-room-patron-permission/{patronId}      |             | Get list of patron permissions based on userId |
-| POST   | /reading-room-patron-permission/{patronId}      |             | create list of patron permissions based on userId |
-| PUT    | /reading-room-patron-permission/{patronId}      |             | update list of patron permissions based on userId |
+| Method | URL                                             | Permissions | Description                                                                                                                                                                                                                                    |
+|--------|-------------------------------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET    | /reading-room                                   |             | Get list of reading rooms based on Cql query. By default, the api only return the records with isDeleted = false. To get both deleted and non deleted records, the query param includeDeleted with value true should be passed in the request. |
+| POST   | /reading-room                                   |             | create a new reading room                                                                                                                                                                                                                      |
+| PUT    | /reading-room/{readingRoomId}                   |             | Update reading room details                                                                                                                                                                                                                    |
+| DELETE | /reading-room/{readingRoomId}                   |             | Delete reading room                                                                                                                                                                                                                            |
+| POST   | /reading-room/{readingRoomId}/access-log        |             | create a access log for reading room                                                                                                                                                                                                           |
+| GET    | /reading-room-patron-permission/{patronId}      |             | Get list of patron permissions based on userId                                                                                                                                                                                                 |
+| POST   | /reading-room-patron-permission/{patronId}      |             | create list of patron permissions based on userId                                                                                                                                                                                              |
+| PUT    | /reading-room-patron-permission/{patronId}      |             | update list of patron permissions based on userId                                                                                                                                                                                              |
 
 ## Installing and deployment
 

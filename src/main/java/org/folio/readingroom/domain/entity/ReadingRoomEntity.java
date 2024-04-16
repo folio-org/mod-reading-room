@@ -30,7 +30,8 @@ public class ReadingRoomEntity extends AuditableEntity {
 
   private boolean ispublic;
 
-  private boolean isdeleted;
+  @Column(name = "is_deleted")
+  private boolean isDeleted;
 
   @OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
@@ -47,6 +48,4 @@ public class ReadingRoomEntity extends AuditableEntity {
     readingRoomServicePointEntity.setReadingRoom(this);
     this.servicePoints.add(readingRoomServicePointEntity);
   }
-
 }
-

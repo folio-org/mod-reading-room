@@ -4,6 +4,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.rest.resource.ReadingRoomApi;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,15 @@ public class ReadingRoomController implements ReadingRoomApi {
       readingRoom.getId(), readingRoom.getName());
     return ResponseEntity.status(HttpStatus.OK)
       .body(readingRoomService.updateReadingRoom(readingRoomId, readingRoom));
+  }
+
+  @Override
+  public ResponseEntity<ReadingRoomCollection> getReadingRoomsByCqlQuery(String query, Integer offset,
+                                                                         Integer limit, Boolean includeDeleted) {
+    log.info("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, "
+      + "offset {}, limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
+    return ResponseEntity.status(HttpStatus.OK)
+      .body(readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit, includeDeleted));
   }
 
   @Override

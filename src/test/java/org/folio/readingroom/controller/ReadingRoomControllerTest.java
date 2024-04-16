@@ -13,6 +13,7 @@ import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.repository.PatronPermissionsRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,8 @@ class ReadingRoomControllerTest extends BaseIT {
 
   @Autowired
   private ReadingRoomRepository readingRoomRepository;
+  @Autowired
+  private PatronPermissionsRepository patronPermissionsRepository;
   @Autowired
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
 
@@ -50,7 +54,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().isCreated())
+        .andExpect(status().isCreated())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
       .andExpect(jsonPath("$.ispublic").value(false))
@@ -356,13 +360,96 @@ class ReadingRoomControllerTest extends BaseIT {
 
   }
 
+  @Test
+  void testGetReadingRoom() throws Exception {
+    removeReadingRoomIfExists();
+
+    //No reading room is created so there will be 0 record in get call
+    this.mockMvc.perform(
+        get("/reading-room")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(0))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(0)));
+
+    var readingRoom1 = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints1 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoom1.servicePoints(servicePoints1);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    //1 reading room is created so there will be 1 record in get call
+    this.mockMvc.perform(
+        get("/reading-room")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(1))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(1)))
+      .andExpect(jsonPath("$.readingRooms[0].id",
+        containsString(READING_ROOM_ID.toString())))
+      .andExpect(jsonPath("$.readingRooms[0].name",
+        containsString(READING_ROOM_NAME)))
+      .andExpect(jsonPath("$.readingRooms[0].ispublic")
+        .value(false))
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].id",
+        containsString(SERVICE_POINT_ID1.toString())))
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].name",
+        containsString(SERVICE_POINT_NAME1)));
+
+
+    var readingRoomId = UUID.randomUUID();
+    var readingRoom2 = createReadingRoom(readingRoomId, true);
+    readingRoom2.setName("test");
+    var servicePoints2 = Set.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom2.servicePoints(servicePoints2);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom2))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    //2 reading rooms are created so there will be 2 records in get call
+    this.mockMvc.perform(
+        get("/reading-room")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(2))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(2)))
+      .andExpect(jsonPath("$.readingRooms[*].id",
+        containsInAnyOrder(READING_ROOM_ID.toString(), readingRoomId.toString())))
+      .andExpect(jsonPath("$.readingRooms[*].name",
+        containsInAnyOrder(READING_ROOM_NAME, "test")))
+      .andExpect(jsonPath("$.readingRooms[*].ispublic",
+        containsInAnyOrder(true, false)))
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
+        containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].name",
+        containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
+  }
 
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
-      if (readingRoomRepository.existsById(READING_ROOM_ID)) {
-        readingRoomRepository.deleteById(READING_ROOM_ID);
-      }
+      patronPermissionsRepository.deleteAll();
+      readingRoomRepository.deleteAll();
     });
   }
 

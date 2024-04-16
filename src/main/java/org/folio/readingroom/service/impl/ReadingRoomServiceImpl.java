@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
@@ -22,7 +23,8 @@ import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
-import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.readingroom.service.converter.Mapper;
+import org.folio.spring.data.OffsetRequest;
 import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ import org.springframework.stereotype.Service;
 public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   private final ReadingRoomRepository readingRoomRepository;
-  private final ReadingRoomMapper readingRoomMapper;
+  private final Mapper readingRoomMapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
   private final ServicePointService servicePointService;
 
@@ -70,6 +72,15 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     return readingRoomRepository.findById(readingRoomId)
       .orElseThrow(() ->
         new NotFoundException(String.format("Reading room with id %s doesn't exists", readingRoomId)));
+  }
+
+  @Override
+  public ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit,
+                                                         Boolean includeDeleted) {
+    log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, "
+      + "limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
+    var readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit));
+    return readingRoomMapper.toDto(readingRooms, includeDeleted);
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

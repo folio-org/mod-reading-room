@@ -18,7 +18,7 @@ import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
-import org.folio.readingroom.service.converter.ReadingRoomMapper;
+import org.folio.readingroom.service.converter.Mapper;
 import org.folio.readingroom.service.impl.ReadingRoomServiceImpl;
 import org.folio.readingroom.utils.HelperUtils;
 import org.folio.spring.exception.NotFoundException;
@@ -36,7 +36,7 @@ class ReadingRoomServiceTest {
   ReadingRoomRepository readingRoomRepository;
 
   @Mock
-  ReadingRoomMapper readingRoomMapper;
+  Mapper readingRoomMapper;
 
   @Mock
   ReadingRoomServicePointRepository readingRoomServicePointRepository;

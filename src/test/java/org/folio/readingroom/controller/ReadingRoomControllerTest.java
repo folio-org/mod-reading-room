@@ -13,6 +13,7 @@ import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -59,6 +60,36 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
       .andExpect(jsonPath("$.servicePoints[*].name",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
+  }
+
+  @Test
+  void testDeleteReadingRoom() throws Exception {
+    removeReadingRoomIfExists();
+    ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom.servicePoints(servicePoints);
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
+      .headers(defaultHeaders()))
+      .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void testDeleteReadingRoomWithInvalidScenarios() throws Exception {
+
+    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
+      .headers(defaultHeaders()))
+      .andExpect(status().is(404))
+      .andExpect(content().string(containsString(
+        "Reading room with id " + READING_ROOM_ID + " doesn't exists")));
+
   }
 
   @Test
@@ -324,6 +355,8 @@ class ReadingRoomControllerTest extends BaseIT {
         "The ID provided in the request URL does not match the ID of the resource in the request body")));
 
   }
+
+
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {

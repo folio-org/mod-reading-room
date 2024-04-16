@@ -22,6 +22,10 @@ public interface ReadingRoomService {
    */
   ReadingRoom updateReadingRoom(UUID readingRoomId, ReadingRoom readingRoom);
 
-
+  /**
+   * soft delete existing {@code ReadingRoom} entity based on  provided reading room id.
+   *
+   * @param readingRoomId - id of the reading room
+   */
   void deleteReadingRoomById(UUID readingRoomId);
 }

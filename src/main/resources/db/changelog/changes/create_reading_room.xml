@@ -16,6 +16,9 @@
       <column name="ispublic" type="boolean">
         <constraints nullable="false"/>
       </column>
+      <column name="isdeleted" type="boolean">
+        <constraints nullable="false"/>
+      </column>
       <column name="created_by" type="uuid"/>
       <column name="created_date" type="timestamp without time zone" defaultValueComputed="now()">
         <constraints nullable="false"/>

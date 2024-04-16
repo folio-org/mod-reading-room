@@ -1,7 +1,9 @@
 package org.folio.readingroom.service;
 
+import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +21,7 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.converter.ReadingRoomMapper;
 import org.folio.readingroom.service.impl.ReadingRoomServiceImpl;
 import org.folio.readingroom.utils.HelperUtils;
+import org.folio.spring.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,4 +93,20 @@ class ReadingRoomServiceTest {
     assertThrows(ServicePointException.class, () -> readingRoomService.createReadingRoom(readingRoomDto));
     verify(readingRoomServicePointRepository).findAllById(any());
   }
+
+  @Test
+  void deleteReadingRoomById_Success() {
+    when(readingRoomRepository.findById(READING_ROOM_ID)).thenReturn(Optional.of(readingRoomEntity));
+    readingRoomEntity.setIsdeleted(true);
+    readingRoomService.deleteReadingRoomById(READING_ROOM_ID);
+    assertTrue(readingRoomEntity.isIsdeleted());
+    verify(readingRoomRepository).findById(READING_ROOM_ID);
+  }
+
+  @Test
+  void deleteReadingRoomById_ReadingRoomNotFound() {
+    when(readingRoomRepository.findById(READING_ROOM_ID)).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> readingRoomService.deleteReadingRoomById(READING_ROOM_ID));
+  }
+
 }

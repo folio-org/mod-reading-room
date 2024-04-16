@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
@@ -21,6 +22,7 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.converter.Mapper;
 import org.folio.readingroom.service.impl.ReadingRoomServiceImpl;
 import org.folio.readingroom.utils.HelperUtils;
+import org.folio.spring.data.OffsetRequest;
 import org.folio.spring.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class ReadingRoomServiceTest {
@@ -49,13 +54,26 @@ class ReadingRoomServiceTest {
 
   ReadingRoom readingRoomDto;
   ReadingRoomEntity readingRoomEntity;
+  ReadingRoomEntity readingRoomEntity1;
+  ReadingRoomEntity readingRoomEntity2;
   UUID uuid;
+
+  String query;
+  Integer offset;
+  Integer limit;
 
   @BeforeEach
   void initData() {
     uuid = UUID.randomUUID();
     readingRoomEntity = HelperUtils.createReadingRoomEntity();
     readingRoomDto = HelperUtils.createReadingRoom(uuid, true);
+    query = "some query";
+    offset = 0;
+    limit = 10;
+    readingRoomEntity1 = HelperUtils.createReadingRoomEntity();
+    readingRoomEntity1.setDeleted(true);
+    readingRoomEntity2 = HelperUtils.createReadingRoomEntity();
+    readingRoomEntity2.setDeleted(false);
   }
 
   @Test
@@ -97,9 +115,9 @@ class ReadingRoomServiceTest {
   @Test
   void deleteReadingRoomById_Success() {
     when(readingRoomRepository.findById(READING_ROOM_ID)).thenReturn(Optional.of(readingRoomEntity));
-    readingRoomEntity.setIsdeleted(true);
+    readingRoomEntity.setDeleted(true);
     readingRoomService.deleteReadingRoomById(READING_ROOM_ID);
-    assertTrue(readingRoomEntity.isIsdeleted());
+    assertTrue(readingRoomEntity.isDeleted());
     verify(readingRoomRepository).findById(READING_ROOM_ID);
   }
 
@@ -107,6 +125,36 @@ class ReadingRoomServiceTest {
   void deleteReadingRoomById_ReadingRoomNotFound() {
     when(readingRoomRepository.findById(READING_ROOM_ID)).thenReturn(Optional.empty());
     assertThrows(NotFoundException.class, () -> readingRoomService.deleteReadingRoomById(READING_ROOM_ID));
+  }
+
+  @Test
+  void getReadingRoomsByCqlQuery_NotIncludeDeleted() {
+    var includeDeleted = false;
+    List<ReadingRoomEntity> readingRoomEntities = List.of(readingRoomEntity1, readingRoomEntity2);
+    Page<ReadingRoomEntity> page = new PageImpl<>(readingRoomEntities, PageRequest.of(offset, limit),
+                                                                        readingRoomEntities.size());
+    when(readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit))).thenReturn(page);
+    when(readingRoomMapper.toDto(page, includeDeleted)).thenReturn(
+                                  new ReadingRoomCollection(List.of(new ReadingRoom()), 1));
+    ReadingRoomCollection result = readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit, includeDeleted);
+    assertEquals(1, result.getTotalRecords());
+    verify(readingRoomRepository).findByCql(query, OffsetRequest.of(offset, limit));
+    verify(readingRoomMapper).toDto(page, includeDeleted);
+  }
+
+  @Test
+  void getReadingRoomsByCqlQuery_IncludeDeleted() {
+    var includeDeleted = true;
+    List<ReadingRoomEntity> readingRoomEntities = List.of(readingRoomEntity1, readingRoomEntity2);
+    Page<ReadingRoomEntity> page = new PageImpl<>(readingRoomEntities, PageRequest.of(offset, limit),
+      readingRoomEntities.size());
+    when(readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit))).thenReturn(page);
+    when(readingRoomMapper.toDto(page, includeDeleted)).thenReturn(new ReadingRoomCollection(
+      List.of(new ReadingRoom(), new ReadingRoom()), 2));
+    ReadingRoomCollection result = readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit, includeDeleted);
+    assertEquals(2, result.getTotalRecords());
+    verify(readingRoomRepository).findByCql(query, OffsetRequest.of(offset, limit));
+    verify(readingRoomMapper).toDto(page, includeDeleted);
   }
 
 }

@@ -13,8 +13,8 @@ import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -64,36 +64,6 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
       .andExpect(jsonPath("$.servicePoints[*].name",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
-  }
-
-  @Test
-  void testDeleteReadingRoom() throws Exception {
-    removeReadingRoomIfExists();
-    ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
-    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
-      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
-    readingRoom.servicePoints(servicePoints);
-    this.mockMvc.perform(
-        post("/reading-room")
-          .content(asJsonString(readingRoom))
-          .headers(defaultHeaders())
-          .contentType(MediaType.APPLICATION_JSON)
-          .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().isCreated());
-    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
-      .headers(defaultHeaders()))
-      .andExpect(status().isNoContent());
-  }
-
-  @Test
-  void testDeleteReadingRoomWithInvalidScenarios() throws Exception {
-
-    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
-      .headers(defaultHeaders()))
-      .andExpect(status().is(404))
-      .andExpect(content().string(containsString(
-        "Reading room with id " + READING_ROOM_ID + " doesn't exists")));
-
   }
 
   @Test
@@ -445,6 +415,182 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
+  @Test
+  void testGetReadingRoomNotIncludingDeleted() throws Exception {
+    removeReadingRoomIfExists();
+    ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom.servicePoints(servicePoints);
+    //creating 1 reading room record
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+    //soft deleting that record
+    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
+        .headers(defaultHeaders()))
+      .andExpect(status().isNoContent());
+    //since the only record present is deleted when we retrieve we get 0 records;
+    this.mockMvc.perform(
+        get("/reading-room")
+          .param("includeDeleted", "false")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(0))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(0)));
+
+    removeReadingRoomIfExists();
+
+    //creating 2 reading room records
+    ReadingRoom readingRoom2 = createReadingRoom(READING_ROOM_ID, false);
+    var servicePointsForReadingRoom2 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoom2.servicePoints(servicePointsForReadingRoom2);
+
+    var readingRoomIdForReadingRoom3 = UUID.randomUUID();
+    var readingRoom3 = createReadingRoom(readingRoomIdForReadingRoom3, true);
+    readingRoom3.setName("test");
+    var servicePoints3 = Set.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom3.servicePoints(servicePoints3);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom2))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom3))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    //soft deleting  1 record
+    this.mockMvc.perform(delete("/reading-room/" + readingRoomIdForReadingRoom3)
+        .headers(defaultHeaders()))
+      .andExpect(status().isNoContent());
+
+    //as one record is soft deleted we  retrieve only 1 non deleted record
+    this.mockMvc.perform(
+        get("/reading-room")
+          .param("includeDeleted", "false")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(1))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(1)))
+      .andExpect(jsonPath("$.readingRooms[0].id",
+        containsString(READING_ROOM_ID.toString())))
+      .andExpect(jsonPath("$.readingRooms[0].name",
+        containsString(READING_ROOM_NAME)))
+      .andExpect(jsonPath("$.readingRooms[0].ispublic")
+        .value(false))
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].id",
+        containsString(SERVICE_POINT_ID1.toString())))
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].name",
+        containsString(SERVICE_POINT_NAME1)));
+  }
+
+  @Test
+  void testGetReadingRoomIncludingDeleted() throws Exception {
+    removeReadingRoomIfExists();
+    //creating 2 reading room records
+    ReadingRoom readingRoom1 = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints1 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoom1.servicePoints(servicePoints1);
+
+    var readingRoomIdForReadingRoom2 = UUID.randomUUID();
+    var readingRoom2 = createReadingRoom(readingRoomIdForReadingRoom2, true);
+    readingRoom2.setName("test");
+    var servicePoints2 = Set.of(createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom2.servicePoints(servicePoints2);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom2))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    //soft deleting  1 record
+    this.mockMvc.perform(delete("/reading-room/" + readingRoomIdForReadingRoom2)
+        .headers(defaultHeaders()))
+      .andExpect(status().isNoContent());
+
+    //as includingDeleted flag is true we get all deleted and non deleted records
+    this.mockMvc.perform(
+        get("/reading-room")
+          .headers(defaultHeaders())
+          .param("includeDeleted", "true")
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(2))
+      .andExpect(jsonPath("readingRooms").isArray())
+      .andExpect(jsonPath("readingRooms", hasSize(2)))
+      .andExpect(jsonPath("$.readingRooms[*].id",
+        containsInAnyOrder(READING_ROOM_ID.toString(), readingRoomIdForReadingRoom2.toString())))
+      .andExpect(jsonPath("$.readingRooms[*].name",
+        containsInAnyOrder(READING_ROOM_NAME, "test")))
+      .andExpect(jsonPath("$.readingRooms[*].ispublic",
+        containsInAnyOrder(true, false)))
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
+        containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].name",
+        containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
+
+  }
+
+  @Test
+  void testDeleteReadingRoom() throws Exception {
+    removeReadingRoomIfExists();
+    ReadingRoom readingRoom = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
+      createServicePoint(SERVICE_POINT_ID2, SERVICE_POINT_NAME2));
+    readingRoom.servicePoints(servicePoints);
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
+        .headers(defaultHeaders()))
+      .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void testDeleteReadingRoomWithInvalidScenario() throws Exception {
+    removeReadingRoomIfExists();
+    this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
+        .headers(defaultHeaders()))
+      .andExpect(status().is(404))
+      .andExpect(content().string(containsString(
+        "Reading room with id " + READING_ROOM_ID + " doesn't exists")));
+
+  }
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {

@@ -1,6 +1,7 @@
 package org.folio.readingroom.service;
 
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
+import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID_FOR_PATRON_TEST;
 import static org.folio.readingroom.utils.HelperUtils.createAccessLog;
 import static org.folio.readingroom.utils.HelperUtils.createAccessLogEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,7 +115,7 @@ class ReadingRoomServiceTest {
   void createAccessLog_MismatchReadingRoomId() {
     var accessLog = createAccessLog(READING_ROOM_ID, AccessLog.ActionEnum.ALLOWED);
     assertThrows(IdMismatchException.class, () ->
-      readingRoomService.createAccessLog(UUID.randomUUID(), accessLog));
+      readingRoomService.createAccessLog(READING_ROOM_ID_FOR_PATRON_TEST, accessLog));
   }
 
   @Test

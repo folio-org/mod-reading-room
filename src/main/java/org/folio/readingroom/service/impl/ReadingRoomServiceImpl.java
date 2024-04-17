@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   private final ReadingRoomRepository readingRoomRepository;
-  private final Mapper readingRoomMapper;
+  private final Mapper mapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
   private final ServicePointService servicePointService;
   private final AccessLogRepository accessLogRepository;
@@ -46,8 +46,8 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("createReadingRoom:: creating reading room with {}", readingRoomDto);
     checkReadingRoomExistsAndThrow(readingRoomDto.getId());
     validateServicePoints(readingRoomDto.getServicePoints());
-    ReadingRoomEntity readingRoomEntity = readingRoomRepository.save(readingRoomMapper.toEntity(readingRoomDto));
-    return readingRoomMapper.toDto(readingRoomEntity);
+    ReadingRoomEntity readingRoomEntity = readingRoomRepository.save(mapper.toEntity(readingRoomDto));
+    return mapper.toDto(readingRoomEntity);
   }
 
   @Override
@@ -61,8 +61,8 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
       .orElseThrow(() ->
         new NotFoundException(String.format("Reading room with id %s doesn't exists", readingRoomId)));
     validateServicePoints(readingRoomDto.getServicePoints(), readingRoomId);
-    updateModifiedFields(existingEntity, readingRoomMapper.toEntity(readingRoomDto));
-    return readingRoomMapper.toDto(readingRoomRepository.save(existingEntity));
+    updateModifiedFields(existingEntity, mapper.toEntity(readingRoomDto));
+    return mapper.toDto(readingRoomRepository.save(existingEntity));
   }
 
   @Override
@@ -71,7 +71,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, "
       + "limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
     var readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit));
-    return readingRoomMapper.toDto(readingRooms, includeDeleted);
+    return mapper.toDto(readingRooms, includeDeleted);
   }
 
   @Override
@@ -82,8 +82,8 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
         "The reading room ID provided in the request URL does not match the ID of the resource in the request body");
     }
     checkAccessLogExistsAndThrow(accessLog.getId());
-    var accessLogEntity = accessLogRepository.save(readingRoomMapper.toEntity(accessLog));
-    return readingRoomMapper.toDto(accessLogEntity);
+    var accessLogEntity = accessLogRepository.save(mapper.toEntity(accessLog));
+    return mapper.toDto(accessLogEntity);
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

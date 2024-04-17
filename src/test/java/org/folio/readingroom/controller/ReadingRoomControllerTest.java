@@ -420,7 +420,7 @@ class ReadingRoomControllerTest extends BaseIT {
   }
 
   @Test
-  public void testCreateAccessLog() throws Exception {
+  void testCreateAccessLog() throws Exception {
     removeReadingRoomIfExists();
     var accessLog = createAccessLog(UUID.randomUUID(), AccessLog.ActionEnum.ALLOWED);
     this.mockMvc.perform(post("/reading-room/" + UUID.randomUUID() + "/access-log")

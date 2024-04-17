@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
@@ -19,6 +20,7 @@ import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.IdMismatchException;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
+import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
@@ -37,6 +39,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   private final Mapper readingRoomMapper;
   private final ReadingRoomServicePointRepository rrServicePointRepository;
   private final ServicePointService servicePointService;
+  private final AccessLogRepository accessLogRepository;
 
   @Override
   public ReadingRoom createReadingRoom(ReadingRoom readingRoomDto) {
@@ -71,11 +74,31 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     return readingRoomMapper.toDto(readingRooms, includeDeleted);
   }
 
+  @Override
+  public AccessLog createAccessLog(UUID readingRoomId, AccessLog accessLog) {
+    log.debug("createAccessLog:: create access log with {}", accessLog);
+    if (!readingRoomId.equals(accessLog.getReadingRoomId())) {
+      throw new IdMismatchException(
+        "The reading room ID provided in the request URL does not match the ID of the resource in the request body");
+    }
+    checkAccessLogExistsAndThrow(accessLog.getId());
+    var accessLogEntity = accessLogRepository.save(readingRoomMapper.toEntity(accessLog));
+    return readingRoomMapper.toDto(accessLogEntity);
+  }
+
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {
     log.debug("checkReadingRoomExistsAndThrow:: checking the readingRoom with id {} exists already", readingRoomId);
     readingRoomRepository.findById(readingRoomId)
       .ifPresent(entity -> {
         throw new ResourceAlreadyExistException(String.format("Reading room with id %s already exists", readingRoomId));
+      });
+  }
+
+  private void checkAccessLogExistsAndThrow(UUID accessLogId) {
+    log.debug("checkAccessLogExistsAndThrow:: checking the access log with id {} exists already", accessLogId);
+    accessLogRepository.findById(accessLogId)
+      .ifPresent(entity -> {
+        throw new ResourceAlreadyExistException(String.format("Access log with id %s already exists", accessLogId));
       });
   }
 

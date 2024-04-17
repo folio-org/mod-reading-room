@@ -8,6 +8,7 @@ import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID2;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID3;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME1;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME2;
+import static org.folio.readingroom.utils.HelperUtils.createAccessLog;
 import static org.folio.readingroom.utils.HelperUtils.createReadingRoom;
 import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -22,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Set;
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionsRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
@@ -36,6 +39,8 @@ class ReadingRoomControllerTest extends BaseIT {
   private ReadingRoomRepository readingRoomRepository;
   @Autowired
   private PatronPermissionsRepository patronPermissionsRepository;
+  @Autowired
+  private AccessLogRepository accessLogRepository;
   @Autowired
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
 
@@ -414,10 +419,49 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
+  @Test
+  public void testCreateAccessLog() throws Exception {
+    removeReadingRoomIfExists();
+    var accessLog = createAccessLog(UUID.randomUUID(), AccessLog.ActionEnum.ALLOWED);
+    this.mockMvc.perform(post("/reading-room/" + UUID.randomUUID() + "/access-log")
+        .content(asJsonString(accessLog))
+      .headers(defaultHeaders())
+      .contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(422));
+
+    var readingRoom1 = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints1 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoom1.servicePoints(servicePoints1);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    this.mockMvc.perform(post("/reading-room/" + READING_ROOM_ID + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(defaultHeaders())
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(201));
+
+    this.mockMvc.perform(post("/reading-room/" + READING_ROOM_ID + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(defaultHeaders())
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(409));
+  }
+
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
       patronPermissionsRepository.deleteAll();
+      accessLogRepository.deleteAll();
       readingRoomRepository.deleteAll();
     });
   }

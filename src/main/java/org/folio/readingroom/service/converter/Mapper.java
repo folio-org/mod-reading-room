@@ -2,10 +2,12 @@ package org.folio.readingroom.service.converter;
 
 import java.util.List;
 import java.util.Optional;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
+import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
@@ -38,9 +40,15 @@ public interface Mapper {
 
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
+  @Mapping(target = "readingRoom.id", source = "accessLog.readingRoomId")
+  AccessLogEntity toEntity(AccessLog accessLog);
+
   List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
 
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
+
+  @Mapping(target = "readingRoomId", source = "entity.readingRoom.id")
+  AccessLog toDto(AccessLogEntity entity);
 
   @Mapping(target = "metadata.createdByUserId", source = "createdBy")
   @Mapping(target = "metadata.createdDate", source = "createdDate")

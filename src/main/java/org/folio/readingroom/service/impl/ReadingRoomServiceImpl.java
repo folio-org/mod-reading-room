@@ -105,7 +105,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   private void updateModifiedFields(ReadingRoomEntity existingEntity, ReadingRoomEntity newEntity) {
     log.debug("updateModifiedFields:: updating existing entity {} with new entity {}", existingEntity, newEntity);
     existingEntity.setName(newEntity.getName());
-    existingEntity.setIspublic(newEntity.isIspublic());
+    existingEntity.setIsPublic(newEntity.getIsPublic());
     //set the last updated field so that metadata field gets updated even if child entity is changed
     existingEntity.setUpdatedDate(LocalDateTime.now());
     var existingServicePoints = new ArrayList<>(emptyIfNull(existingEntity.getServicePoints()));

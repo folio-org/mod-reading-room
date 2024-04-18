@@ -26,11 +26,11 @@ public class HelperUtils {
   public static final String SERVICE_POINT_NAME2 = "servicePoint2";
   public static final String SERVICE_POINT_NAME3 = "servicePoint3";
 
-  public static ReadingRoom createReadingRoom(UUID readingRoomId, boolean ispublic) {
+  public static ReadingRoom createReadingRoom(UUID readingRoomId, boolean isPublic) {
     ReadingRoom readingRoom = new ReadingRoom();
     readingRoom.setId(readingRoomId);
     readingRoom.setName(READING_ROOM_NAME);
-    readingRoom.setIspublic(ispublic);
+    readingRoom.setIsPublic(isPublic);
     return readingRoom;
   }
 
@@ -62,7 +62,7 @@ public class HelperUtils {
     ReadingRoomEntity readingRoomEntity = new ReadingRoomEntity();
     readingRoomEntity.setId(READING_ROOM_ID);
     readingRoomEntity.setName(READING_ROOM_NAME);
-    readingRoomEntity.setIspublic(true);
+    readingRoomEntity.setIsPublic(true);
     Set<ReadingRoomServicePointEntity> servicePoints = new HashSet<>();
     servicePoints.add(createServicePointEntity(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
     readingRoomEntity.setServicePoints(servicePoints);

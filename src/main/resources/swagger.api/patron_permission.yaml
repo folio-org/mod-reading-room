@@ -7,6 +7,7 @@ paths:
   /reading-room-patron-permission/{patronId}:
     parameters:
       - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/servicePointId'
     get:
       summary: Get list of patron permissions based on userId
       operationId: getPatronPermissionsByUserId
@@ -92,3 +93,10 @@ components:
       schema:
         $ref: "schemas/common.yaml#/uuid"
       required: true
+    servicePointId:
+      in: query
+      name: servicePointId
+      schema:
+        $ref: "schemas/common.yaml#/uuid"
+      required: false
+

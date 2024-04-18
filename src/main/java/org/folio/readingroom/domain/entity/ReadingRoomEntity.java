@@ -39,6 +39,11 @@ public class ReadingRoomEntity extends AuditableEntity {
     orphanRemoval = true)
   private Set<ReadingRoomServicePointEntity> servicePoints = new LinkedHashSet<>();
 
+  @OneToMany(cascade = CascadeType.ALL,
+    mappedBy = "readingRoom",
+    orphanRemoval = true)
+  private Set<PatronPermissionEntity> patronPermissions = new LinkedHashSet<>();
+
   public void removeServicePoints(ReadingRoomServicePointEntity readingRoomServicePointEntity) {
     readingRoomServicePointEntity.setReadingRoom(null);
     this.servicePoints.remove(readingRoomServicePointEntity);

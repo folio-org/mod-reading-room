@@ -4,7 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-  <!-- Create reading room service point table -->
   <changeSet id="createTablereadingRoomServicePoint" author="vignesh">
     <createTable tableName="reading_room_service_point">
       <column name="service_point_id" type="UUID">
@@ -17,6 +16,12 @@
         <constraints foreignKeyName="fk_rr_readingroom_servicepoint_id" referencedTableName="reading_room" referencedColumnNames="id"/>
       </column>
     </createTable>
+  </changeSet>
+
+  <changeSet id="addIndexesToReadingRoomServicePointTable" author="singhAdesh">
+    <createIndex indexName="idx_service_point_id" tableName="reading_room_service_point">
+      <column name="service_point_id"/>
+    </createIndex>
   </changeSet>
 
 </databaseChangeLog>

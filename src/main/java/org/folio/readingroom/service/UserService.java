@@ -6,4 +6,8 @@ import org.folio.readingroom.domain.dto.PatronPermission;
 
 public interface UserService {
   void validatePatron(UUID patronId, List<PatronPermission> patronPermissions);
+
+  void validatePatronPermissions(UUID patronId, List<PatronPermission> patronPermissions);
+
+  void validatePatronExistence(UUID patronId);
 }

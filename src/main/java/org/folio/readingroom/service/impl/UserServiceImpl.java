@@ -19,11 +19,19 @@ public class UserServiceImpl implements UserService {
 
   public void validatePatron(UUID patronId, List<PatronPermission> patronPermissions) {
     log.info("validatePatron:: Validating patron with id {}", patronId);
+    validatePatronPermissions(patronId, patronPermissions);
+    validatePatronExistence(patronId);
+  }
+
+  public void validatePatronPermissions(UUID patronId, List<PatronPermission> patronPermissions) {
     boolean anyInvalid = patronPermissions.stream()
       .anyMatch(permission -> !patronId.equals(permission.getUserId()));
     if (anyInvalid) {
       throw new IllegalArgumentException("patronId does not match with userIds of PatronPermissions");
     }
+  }
+
+  public void validatePatronExistence(UUID patronId) {
     try {
       usersClient.getUserById(String.valueOf(patronId));
     } catch (FeignException.NotFound ex) {

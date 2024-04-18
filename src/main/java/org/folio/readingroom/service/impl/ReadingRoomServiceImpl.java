@@ -54,7 +54,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
       throw new IdMismatchException(
         "The ID provided in the request URL does not match the ID of the resource in the request body");
     }
-    var existingEntity = getReadingRoomById(readingRoomId);
+    var existingEntity = getReadingRoomByIdOrThrow(readingRoomId);
     validateServicePoints(readingRoomDto.getServicePoints(), readingRoomId);
     updateModifiedFields(existingEntity, readingRoomMapper.toEntity(readingRoomDto));
     return readingRoomMapper.toDto(readingRoomRepository.save(existingEntity));
@@ -63,12 +63,12 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   @Override
   public void deleteReadingRoomById(UUID readingRoomId) {
     log.debug("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
-    ReadingRoomEntity readingRoomEntity = getReadingRoomById(readingRoomId);
+    ReadingRoomEntity readingRoomEntity = getReadingRoomByIdOrThrow(readingRoomId);
     readingRoomEntity.setDeleted(true);
     readingRoomRepository.save(readingRoomEntity);
   }
 
-  private ReadingRoomEntity getReadingRoomById(UUID readingRoomId) {
+  private ReadingRoomEntity getReadingRoomByIdOrThrow(UUID readingRoomId) {
     return readingRoomRepository.findById(readingRoomId)
       .orElseThrow(() ->
         new NotFoundException(String.format("Reading room with id %s doesn't exists", readingRoomId)));

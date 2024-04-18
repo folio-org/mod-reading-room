@@ -46,8 +46,8 @@ public class HelperUtils {
 
   public static ServicePoint createServicePoint(UUID servicePointId, String servicePointName) {
     ServicePoint servicePoint = new ServicePoint();
-    servicePoint.setId(servicePointId);
-    servicePoint.setName(servicePointName);
+    servicePoint.setValue(servicePointId);
+    servicePoint.setLabel(servicePointName);
     return servicePoint;
   }
 

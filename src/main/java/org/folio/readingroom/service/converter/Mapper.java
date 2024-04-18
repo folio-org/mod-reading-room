@@ -38,6 +38,8 @@ public interface Mapper {
   @Mapping(target = "updatedDate", ignore = true)
   ReadingRoomEntity toEntity(ReadingRoom readingRoom);
 
+  @Mapping(target = "id", source = "value")
+  @Mapping(target = "name", source = "label")
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
   @Mapping(target = "readingRoom.id", source = "accessLog.readingRoomId")
@@ -45,6 +47,8 @@ public interface Mapper {
 
   List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
 
+  @Mapping(target = "value", source = "id")
+  @Mapping(target = "label", source = "name")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
   @Mapping(target = "readingRoomId", source = "entity.readingRoom.id")

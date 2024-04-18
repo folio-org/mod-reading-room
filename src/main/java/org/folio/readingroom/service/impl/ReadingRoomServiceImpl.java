@@ -142,7 +142,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("validateServicePoints:: validating servicePoints with {}", servicePointDtoList);
     var servicePointIds = servicePointDtoList
       .stream()
-      .map(ServicePoint::getId)
+      .map(ServicePoint::getValue)
       .toList();
     checkInvalidServicePoints(servicePointIds);
     var existingServicePointList = rrServicePointRepository.findAllById(servicePointIds);
@@ -156,7 +156,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("validateServicePoints:: validating servicePoints with {}", servicePointDtoList);
     var servicePointIds = servicePointDtoList
       .stream()
-      .map(ServicePoint::getId)
+      .map(ServicePoint::getValue)
       .toList();
     checkInvalidServicePoints(servicePointIds);
     // check if the service point ids associated with other reading rooms already

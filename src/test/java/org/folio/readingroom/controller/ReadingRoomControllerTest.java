@@ -500,7 +500,7 @@ class ReadingRoomControllerTest extends BaseIT {
         containsString(READING_ROOM_ID.toString())))
       .andExpect(jsonPath("$.readingRooms[0].name",
         containsString(READING_ROOM_NAME)))
-      .andExpect(jsonPath("$.readingRooms[0].ispublic")
+      .andExpect(jsonPath("$.readingRooms[0].isPublic")
         .value(false))
       .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].id",
         containsString(SERVICE_POINT_ID1.toString())))
@@ -558,7 +558,7 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(READING_ROOM_ID.toString(), readingRoomIdForReadingRoom2.toString())))
       .andExpect(jsonPath("$.readingRooms[*].name",
         containsInAnyOrder(READING_ROOM_NAME, "test")))
-      .andExpect(jsonPath("$.readingRooms[*].ispublic",
+      .andExpect(jsonPath("$.readingRooms[*].isPublic",
         containsInAnyOrder(true, false)))
       .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))

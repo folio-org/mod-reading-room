@@ -34,4 +34,10 @@ public interface ReadingRoomService {
    */
   ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit, Boolean includeDeleted);
 
+  /**
+   * soft delete existing {@code ReadingRoom} entity based on  provided reading room id.
+   *
+   * @param readingRoomId - id of the reading room
+   */
+  void deleteReadingRoomById(UUID readingRoomId);
 }

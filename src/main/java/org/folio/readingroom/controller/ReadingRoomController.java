@@ -43,4 +43,10 @@ public class ReadingRoomController implements ReadingRoomApi {
       .body(readingRoomService.getReadingRoomsByCqlQuery(query, offset, limit, includeDeleted));
   }
 
+  @Override
+  public ResponseEntity<Void> deleteReadingRoomById(UUID readingRoomId) {
+    log.info("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
+    readingRoomService.deleteReadingRoomById(readingRoomId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

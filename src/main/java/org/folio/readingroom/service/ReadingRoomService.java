@@ -36,6 +36,13 @@ public interface ReadingRoomService {
   ReadingRoomCollection getReadingRoomsByCqlQuery(String query, Integer offset, Integer limit, Boolean includeDeleted);
 
   /**
+   * soft delete existing {@code ReadingRoom} entity based on  provided reading room id.
+   *
+   * @param readingRoomId - id of the reading room
+   */
+  void deleteReadingRoomById(UUID readingRoomId);
+
+  /**
    * Creates an access log entry for the specified reading room.
    *
    * @param readingRoomId The UUID of the reading room for which the access log is created.
@@ -43,5 +50,4 @@ public interface ReadingRoomService {
    * @return The created access log entry.
    */
   AccessLog createAccessLog(UUID readingRoomId, AccessLog accessLog);
-
 }

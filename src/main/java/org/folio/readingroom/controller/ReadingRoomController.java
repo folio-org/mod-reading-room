@@ -45,10 +45,16 @@ public class ReadingRoomController implements ReadingRoomApi {
   }
 
   @Override
+  public ResponseEntity<Void> deleteReadingRoomById(UUID readingRoomId) {
+    log.info("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
+    readingRoomService.deleteReadingRoomById(readingRoomId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @Override
   public ResponseEntity<AccessLog> createAccessLog(UUID readingRoomId, AccessLog accessLog) {
     log.info("createAccessLog:: creating access log for readingRoomId {} , accessLog {}", readingRoomId, accessLog);
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(readingRoomService.createAccessLog(readingRoomId, accessLog));
   }
-
 }

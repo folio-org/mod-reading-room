@@ -30,7 +30,7 @@ public class PatronPermissionsServiceImpl implements PatronPermissionsService {
   @Override
   public List<PatronPermission> updatePatronPermissionsByUserId(UUID patronId,
                                                                 List<PatronPermission> patronPermissions) {
-    userService.validatePatron(patronId, patronPermissions);
+    userService.validatePatronPermissions(patronId, patronPermissions);
     List<PatronPermissionEntity> entities = mapper.toEntityList(patronPermissions);
     patronPermissionsRepository.saveAll(entities);
     return patronPermissions;

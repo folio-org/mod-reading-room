@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -122,9 +121,7 @@ class PatronPermissionControllerTest extends BaseIT {
       .andExpect(jsonPath("$[0].readingRoomId").value("7a5abc9f-f3d7-4856-b8d7-6712462ca009"))
       .andExpect(jsonPath("$.[0].userId").value("2205005b-ca51-4a04-87fd-938eefa8f6df"))
       .andExpect(jsonPath("$.[0].access").value(NOT_ALLOWED.getValue()))
-      .andExpect(jsonPath("$", hasSize(1)))
-      .andDo(print());
-
+      .andExpect(jsonPath("$", hasSize(1)));
 
     PatronPermission patronPermission = createPatronPermission(UUID.randomUUID(),
       READING_ROOM_ID_FOR_PATRON_TEST, UUID.fromString("2205005b-ca51-4a04-87fd-938eefa8f6df"));
@@ -211,8 +208,7 @@ class PatronPermissionControllerTest extends BaseIT {
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is2xxSuccessful())
-      .andExpect(jsonPath("$", hasSize(1)))
-      .andDo(print());
+      .andExpect(jsonPath("$", hasSize(1)));
   }
 
   private void removeReadingRoomIfExists() {

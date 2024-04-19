@@ -17,11 +17,4 @@
       </column>
     </createTable>
   </changeSet>
-
-  <changeSet id="addIndexesToReadingRoomServicePointTable" author="singhAdesh">
-    <createIndex indexName="idx_service_point_id" tableName="reading_room_service_point">
-      <column name="service_point_id"/>
-    </createIndex>
-  </changeSet>
-
 </databaseChangeLog>

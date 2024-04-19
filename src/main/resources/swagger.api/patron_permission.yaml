@@ -7,10 +7,11 @@ paths:
   /reading-room-patron-permission/{patronId}:
     parameters:
       - $ref: '#/components/parameters/userId'
-      - $ref: '#/components/parameters/servicePointId'
     get:
       summary: Get list of patron permissions based on userId
       operationId: getPatronPermissionsByUserId
+      parameters:
+        - $ref: '#/components/parameters/servicePointId'
       responses:
         '200':
           description: patron permissions retrieved successfully

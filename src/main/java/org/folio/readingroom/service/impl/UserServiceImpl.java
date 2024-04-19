@@ -17,18 +17,14 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
   private final UsersClient usersClient;
 
-  public void validatePatron(UUID patronId, List<PatronPermission> patronPermissions) {
-    log.info("validatePatron:: Validating patron with id {}", patronId);
-    validatePatronPermissions(patronId, patronPermissions);
-    validatePatronExistence(patronId);
-  }
-
   public void validatePatronPermissions(UUID patronId, List<PatronPermission> patronPermissions) {
+    log.info("validatePatron:: Validating patron with id {}", patronId);
     boolean anyInvalid = patronPermissions.stream()
       .anyMatch(permission -> !patronId.equals(permission.getUserId()));
     if (anyInvalid) {
       throw new IllegalArgumentException("patronId does not match with userIds of PatronPermissions");
     }
+    validatePatronExistence(patronId);
   }
 
   public void validatePatronExistence(UUID patronId) {

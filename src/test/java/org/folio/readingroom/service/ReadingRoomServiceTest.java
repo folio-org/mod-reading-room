@@ -1,6 +1,9 @@
 package org.folio.readingroom.service;
 
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
+import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID_FOR_PATRON_TEST;
+import static org.folio.readingroom.utils.HelperUtils.createAccessLog;
+import static org.folio.readingroom.utils.HelperUtils.createAccessLogEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +15,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
@@ -19,6 +23,7 @@ import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.IdMismatchException;
 import org.folio.readingroom.exception.ResourceAlreadyExistException;
 import org.folio.readingroom.exception.ServicePointException;
+import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.converter.Mapper;
@@ -47,6 +52,9 @@ class ReadingRoomServiceTest {
 
   @Mock
   ReadingRoomServicePointRepository readingRoomServicePointRepository;
+
+  @Mock
+  AccessLogRepository accessLogRepository;
 
   @Mock
   ServicePointService servicePointService;
@@ -193,5 +201,31 @@ class ReadingRoomServiceTest {
     verify(readingRoomMapper).toEntity(any(ReadingRoom.class));
     verify(readingRoomRepository).save(any());
     verify(readingRoomMapper).toDto(any(ReadingRoomEntity.class));
+  }
+
+  @Test
+  void createAccessLog_success() {
+    var accessLog = createAccessLog(READING_ROOM_ID, AccessLog.ActionEnum.ALLOWED);
+    var accessLogEntity = createAccessLogEntity(accessLog);
+    when(accessLogRepository.save(any())).thenReturn(accessLogEntity);
+    when(accessLogRepository.findById(any())).thenReturn(Optional.empty());
+    when(readingRoomMapper.toDto(accessLogEntity)).thenReturn(accessLog);
+    assertEquals(readingRoomService.createAccessLog(READING_ROOM_ID, accessLog), accessLog);
+  }
+
+  @Test
+  void createAccessLog_MismatchReadingRoomId() {
+    var accessLog = createAccessLog(READING_ROOM_ID, AccessLog.ActionEnum.ALLOWED);
+    assertThrows(IdMismatchException.class, () ->
+      readingRoomService.createAccessLog(READING_ROOM_ID_FOR_PATRON_TEST, accessLog));
+  }
+
+  @Test
+  void createAccessLog_AccessLogAlreadyExists() {
+    var accessLog = createAccessLog(READING_ROOM_ID, AccessLog.ActionEnum.ALLOWED);
+    var accessLogEntity = createAccessLogEntity(accessLog);
+    when(accessLogRepository.findById(any())).thenReturn(Optional.of(accessLogEntity));
+    assertThrows(ResourceAlreadyExistException.class, () ->
+      readingRoomService.createAccessLog(READING_ROOM_ID, accessLog));
   }
 }

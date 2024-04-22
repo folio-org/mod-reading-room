@@ -1,6 +1,7 @@
 package org.folio.readingroom.service;
 
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 
@@ -40,4 +41,13 @@ public interface ReadingRoomService {
    * @param readingRoomId - id of the reading room
    */
   void deleteReadingRoomById(UUID readingRoomId);
+
+  /**
+   * Creates an access log entry for the specified reading room.
+   *
+   * @param readingRoomId The UUID of the reading room for which the access log is created.
+   * @param accessLog The access log entry to be created.
+   * @return The created access log entry.
+   */
+  AccessLog createAccessLog(UUID readingRoomId, AccessLog accessLog);
 }

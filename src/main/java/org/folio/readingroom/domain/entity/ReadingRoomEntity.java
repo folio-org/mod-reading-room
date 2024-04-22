@@ -28,7 +28,8 @@ public class ReadingRoomEntity extends AuditableEntity {
 
   private String name;
 
-  private boolean ispublic;
+  @Column(name = "is_public")
+  private Boolean isPublic;
 
   @Column(name = "is_deleted")
   private boolean isDeleted;

@@ -10,7 +10,7 @@ ReadingRoom:
       description: "Name of the reading room"
       type: string
       minLength: 1
-    ispublic:
+    isPublic:
       description: "A flag to determine whether a reading room is public or not"
       type: boolean
     servicePoints:
@@ -26,7 +26,7 @@ ReadingRoom:
   required:
     - "id"
     - "name"
-    - "ispublic"
+    - "isPublic"
     - "servicePoints"
 
 ReadingRoomCollection:

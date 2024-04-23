@@ -21,7 +21,6 @@
     </sql>
   </changeSet>
 
-  <!-- Create patron permission table -->
   <changeSet id="createTablePatronPermission" author="vignesh">
     <createTable tableName="patron_permission">
       <column name="id" type="UUID">
@@ -48,4 +47,15 @@
   <changeSet id="addUniqueConstraint" author="singhAdesh">
     <addUniqueConstraint columnNames="user_id, reading_room_id" constraintName="unique_user_reading_room" tableName="patron_permission"/>
   </changeSet>
+
+  <changeSet id="addIndexesToPatronPermissionTable" author="singhAdesh">
+    <createIndex indexName="idx_user_id" tableName="patron_permission">
+      <column name="user_id"/>
+    </createIndex>
+
+    <createIndex indexName="idx_reading_room_id" tableName="patron_permission">
+      <column name="reading_room_id"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>

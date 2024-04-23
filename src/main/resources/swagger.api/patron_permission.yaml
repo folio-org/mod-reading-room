@@ -10,6 +10,8 @@ paths:
     get:
       summary: Get list of patron permissions based on userId
       operationId: getPatronPermissionsByUserId
+      parameters:
+        - $ref: '#/components/parameters/servicePointId'
       responses:
         '200':
           description: patron permissions retrieved successfully
@@ -92,3 +94,10 @@ components:
       schema:
         $ref: "schemas/common.yaml#/uuid"
       required: true
+    servicePointId:
+      in: query
+      name: servicePointId
+      schema:
+        $ref: "schemas/common.yaml#/uuid"
+      required: false
+

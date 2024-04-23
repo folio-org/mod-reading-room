@@ -4,7 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-  <!-- Create reading room service point table -->
   <changeSet id="createTablereadingRoomServicePoint" author="vignesh">
     <createTable tableName="reading_room_service_point">
       <column name="service_point_id" type="UUID">
@@ -18,5 +17,4 @@
       </column>
     </createTable>
   </changeSet>
-
 </databaseChangeLog>

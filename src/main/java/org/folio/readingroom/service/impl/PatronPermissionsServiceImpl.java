@@ -73,7 +73,7 @@ public class PatronPermissionsServiceImpl implements PatronPermissionsService {
         metadata.setUpdatedDate(permission.getUpdatedDate() != null ? permission.getUpdatedDate().toString() : null);
         patronPermission.setMetadata(metadata);
       } else {
-        if (readingRoomEntity.isIspublic()) {
+        if (Boolean.TRUE.equals(readingRoomEntity.getIsPublic())) {
           patronPermission.setAccess(PatronPermission.AccessEnum.ALLOWED);
         } else {
           patronPermission.setAccess(PatronPermission.AccessEnum.NOT_ALLOWED);

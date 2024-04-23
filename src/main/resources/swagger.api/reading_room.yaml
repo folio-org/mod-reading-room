@@ -76,8 +76,8 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/accessLogBody'
       responses:
-        '204':
-          description: Access log created successfully
+        '201':
+          $ref: '#/components/responses/accessLogResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -107,6 +107,12 @@ components:
         application/json:
           schema:
             $ref: "schemas/readingRoom.yaml#/ReadingRoom"
+    accessLogResponse:
+      description: accessLog Object
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/accessLog.yaml#/AccessLog"
     NotFound:
       description: Resource not found
       content:
@@ -158,6 +164,7 @@ components:
       schema:
         $ref: "schemas/common.yaml#/uuid"
       required: true
+      description: Id of the reading room
     cqlQuery:
       name: query
       in: query

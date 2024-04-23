@@ -2,15 +2,15 @@ ServicePoint:
   description: "Service point associated to the reading room"
   type: object
   properties:
-    id:
+    value:
       description: "A unique service point identifier"
       type: string
       format: "UUID"
-    name:
+    label:
       description: "Name of the service point"
       type: string
       minLength: 1
   required:
-    - "id"
-    - "name"
+    - "value"
+    - "label"
 

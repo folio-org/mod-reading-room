@@ -3,6 +3,7 @@ package org.folio.readingroom.controller;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.rest.resource.ReadingRoomApi;
@@ -48,5 +49,12 @@ public class ReadingRoomController implements ReadingRoomApi {
     log.info("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
     readingRoomService.deleteReadingRoomById(readingRoomId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @Override
+  public ResponseEntity<AccessLog> createAccessLog(UUID readingRoomId, AccessLog accessLog) {
+    log.info("createAccessLog:: creating access log for readingRoomId {} , accessLog {}", readingRoomId, accessLog);
+    return ResponseEntity.status(HttpStatus.CREATED)
+      .body(readingRoomService.createAccessLog(readingRoomId, accessLog));
   }
 }

@@ -13,7 +13,7 @@
       <column name="name" type="text">
         <constraints unique="true" nullable="false"/>
       </column>
-      <column name="ispublic" type="boolean">
+      <column name="is_public" type="boolean">
         <constraints nullable="false"/>
       </column>
       <column name="is_deleted" type="boolean" defaultValue="false">

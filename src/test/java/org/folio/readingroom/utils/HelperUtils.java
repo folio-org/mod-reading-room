@@ -3,9 +3,11 @@ package org.folio.readingroom.utils;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ServicePoint;
+import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 
@@ -24,11 +26,11 @@ public class HelperUtils {
   public static final String SERVICE_POINT_NAME2 = "servicePoint2";
   public static final String SERVICE_POINT_NAME3 = "servicePoint3";
 
-  public static ReadingRoom createReadingRoom(UUID readingRoomId, boolean ispublic) {
+  public static ReadingRoom createReadingRoom(UUID readingRoomId, boolean isPublic) {
     ReadingRoom readingRoom = new ReadingRoom();
     readingRoom.setId(readingRoomId);
     readingRoom.setName(READING_ROOM_NAME);
-    readingRoom.setIspublic(ispublic);
+    readingRoom.setIsPublic(isPublic);
     return readingRoom;
   }
 
@@ -44,8 +46,8 @@ public class HelperUtils {
 
   public static ServicePoint createServicePoint(UUID servicePointId, String servicePointName) {
     ServicePoint servicePoint = new ServicePoint();
-    servicePoint.setId(servicePointId);
-    servicePoint.setName(servicePointName);
+    servicePoint.setValue(servicePointId);
+    servicePoint.setLabel(servicePointName);
     return servicePoint;
   }
 
@@ -60,10 +62,32 @@ public class HelperUtils {
     ReadingRoomEntity readingRoomEntity = new ReadingRoomEntity();
     readingRoomEntity.setId(READING_ROOM_ID);
     readingRoomEntity.setName(READING_ROOM_NAME);
-    readingRoomEntity.setIspublic(true);
+    readingRoomEntity.setIsPublic(true);
     Set<ReadingRoomServicePointEntity> servicePoints = new HashSet<>();
     servicePoints.add(createServicePointEntity(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
     readingRoomEntity.setServicePoints(servicePoints);
     return readingRoomEntity;
+  }
+
+  public static AccessLog createAccessLog(UUID accessLogId, AccessLog.ActionEnum actionEnum) {
+    AccessLog accessLog = new AccessLog();
+    accessLog.setId(accessLogId);
+    accessLog.setAction(actionEnum);
+    accessLog.setPatronId(UUID.randomUUID());
+    accessLog.setUserId(UUID.randomUUID());
+    accessLog.readingRoomId(READING_ROOM_ID);
+    return accessLog;
+  }
+
+  public static AccessLogEntity createAccessLogEntity(AccessLog accessLog) {
+    AccessLogEntity accessLogEntity = new AccessLogEntity();
+    accessLogEntity.setId(accessLog.getId());
+    accessLogEntity.setAction(accessLog.getAction());
+    accessLogEntity.setUserId(accessLog.getUserId());
+    accessLogEntity.setPatronId(accessLog.getPatronId());
+    var readingRoom = new ReadingRoomEntity();
+    readingRoom.setId(READING_ROOM_ID);
+    accessLogEntity.setReadingRoom(readingRoom);
+    return accessLogEntity;
   }
 }

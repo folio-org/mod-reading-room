@@ -8,6 +8,7 @@ import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID2;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_ID3;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME1;
 import static org.folio.readingroom.utils.HelperUtils.SERVICE_POINT_NAME2;
+import static org.folio.readingroom.utils.HelperUtils.createAccessLog;
 import static org.folio.readingroom.utils.HelperUtils.createReadingRoom;
 import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -23,7 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Set;
 import java.util.UUID;
+import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
+import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionsRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
@@ -37,6 +40,8 @@ class ReadingRoomControllerTest extends BaseIT {
   private ReadingRoomRepository readingRoomRepository;
   @Autowired
   private PatronPermissionsRepository patronPermissionsRepository;
+  @Autowired
+  private AccessLogRepository accessLogRepository;
   @Autowired
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
 
@@ -57,12 +62,12 @@ class ReadingRoomControllerTest extends BaseIT {
         .andExpect(status().isCreated())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
-      .andExpect(jsonPath("$.ispublic").value(false))
+      .andExpect(jsonPath("$.isPublic").value(false))
       .andExpect(jsonPath("$.servicePoints").isArray())
       .andExpect(jsonPath("$.servicePoints", hasSize(2)))
-      .andExpect(jsonPath("$.servicePoints[*].id",
+      .andExpect(jsonPath("$.servicePoints[*].value",
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
-      .andExpect(jsonPath("$.servicePoints[*].name",
+      .andExpect(jsonPath("$.servicePoints[*].label",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
@@ -138,7 +143,7 @@ class ReadingRoomControllerTest extends BaseIT {
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
     var servicePoint = createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1);
-    servicePoint.setName("");
+    servicePoint.setLabel("");
     readingRoom.setServicePoints(Set.of(servicePoint));
 
     // creating Reading room with empty service point name
@@ -150,7 +155,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
-        "name size must be between 1 and 2147483647")));
+        "label size must be between 1 and 2147483647")));
 
 
     // creating Reading room without servicePoints
@@ -219,11 +224,11 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
-      .andExpect(jsonPath("$.ispublic").value(false))
+      .andExpect(jsonPath("$.isPublic").value(false))
       .andExpect(jsonPath("$.servicePoints").isArray())
       .andExpect(jsonPath("$.servicePoints", hasSize(1)))
-      .andExpect(jsonPath("$.servicePoints[0].id").value(SERVICE_POINT_ID1.toString()))
-      .andExpect(jsonPath("$.servicePoints[0].name").value("test"));
+      .andExpect(jsonPath("$.servicePoints[0].value").value(SERVICE_POINT_ID1.toString()))
+      .andExpect(jsonPath("$.servicePoints[0].label").value("test"));
 
     // updating reading room by changing name and ispublic and also adding new servicePoint
     readingRoom = createReadingRoom(READING_ROOM_ID, true);
@@ -241,12 +246,12 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value("test"))
-      .andExpect(jsonPath("$.ispublic").value(true))
+      .andExpect(jsonPath("$.isPublic").value(true))
       .andExpect(jsonPath("$.servicePoints").isArray())
       .andExpect(jsonPath("$.servicePoints", hasSize(2)))
-      .andExpect(jsonPath("$.servicePoints[*].id",
+      .andExpect(jsonPath("$.servicePoints[*].value",
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
-      .andExpect(jsonPath("$.servicePoints[*].name",
+      .andExpect(jsonPath("$.servicePoints[*].label",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
@@ -371,11 +376,11 @@ class ReadingRoomControllerTest extends BaseIT {
         containsString(READING_ROOM_ID.toString())))
       .andExpect(jsonPath("$.readingRooms[0].name",
         containsString(READING_ROOM_NAME)))
-      .andExpect(jsonPath("$.readingRooms[0].ispublic")
+      .andExpect(jsonPath("$.readingRooms[0].isPublic")
         .value(false))
-      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].id",
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].value",
         containsString(SERVICE_POINT_ID1.toString())))
-      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].name",
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].label",
         containsString(SERVICE_POINT_NAME1)));
 
 
@@ -407,11 +412,11 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(READING_ROOM_ID.toString(), readingRoomId.toString())))
       .andExpect(jsonPath("$.readingRooms[*].name",
         containsInAnyOrder(READING_ROOM_NAME, "test")))
-      .andExpect(jsonPath("$.readingRooms[*].ispublic",
+      .andExpect(jsonPath("$.readingRooms[*].isPublic",
         containsInAnyOrder(true, false)))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].value",
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].name",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].label",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
   }
 
@@ -495,11 +500,11 @@ class ReadingRoomControllerTest extends BaseIT {
         containsString(READING_ROOM_ID.toString())))
       .andExpect(jsonPath("$.readingRooms[0].name",
         containsString(READING_ROOM_NAME)))
-      .andExpect(jsonPath("$.readingRooms[0].ispublic")
+      .andExpect(jsonPath("$.readingRooms[0].isPublic")
         .value(false))
-      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].id",
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].value",
         containsString(SERVICE_POINT_ID1.toString())))
-      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].name",
+      .andExpect(jsonPath("$.readingRooms[0].servicePoints[0].label",
         containsString(SERVICE_POINT_NAME1)));
   }
 
@@ -553,11 +558,11 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(READING_ROOM_ID.toString(), readingRoomIdForReadingRoom2.toString())))
       .andExpect(jsonPath("$.readingRooms[*].name",
         containsInAnyOrder(READING_ROOM_NAME, "test")))
-      .andExpect(jsonPath("$.readingRooms[*].ispublic",
+      .andExpect(jsonPath("$.readingRooms[*].isPublic",
         containsInAnyOrder(true, false)))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].value",
         containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].name",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].label",
         containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
 
   }
@@ -592,9 +597,48 @@ class ReadingRoomControllerTest extends BaseIT {
 
   }
 
+  @Test
+  void testCreateAccessLog() throws Exception {
+    removeReadingRoomIfExists();
+    var accessLog = createAccessLog(UUID.randomUUID(), AccessLog.ActionEnum.ALLOWED);
+    this.mockMvc.perform(post("/reading-room/" + UUID.randomUUID() + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(defaultHeaders())
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(422));
+
+    var readingRoom1 = createReadingRoom(READING_ROOM_ID, false);
+    var servicePoints1 = Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1));
+    readingRoom1.servicePoints(servicePoints1);
+
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom1))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+
+    this.mockMvc.perform(post("/reading-room/" + READING_ROOM_ID + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(defaultHeaders())
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(201));
+
+    this.mockMvc.perform(post("/reading-room/" + READING_ROOM_ID + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(defaultHeaders())
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(409));
+  }
+
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
       patronPermissionsRepository.deleteAll();
+      accessLogRepository.deleteAll();
       readingRoomRepository.deleteAll();
     });
   }

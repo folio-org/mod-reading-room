@@ -28,7 +28,8 @@ public class ReadingRoomEntity extends AuditableEntity {
 
   private String name;
 
-  private boolean ispublic;
+  @Column(name = "is_public")
+  private Boolean isPublic;
 
   @Column(name = "is_deleted")
   private boolean isDeleted;
@@ -38,6 +39,11 @@ public class ReadingRoomEntity extends AuditableEntity {
     mappedBy = "readingRoom",
     orphanRemoval = true)
   private Set<ReadingRoomServicePointEntity> servicePoints = new LinkedHashSet<>();
+
+  @OneToMany(cascade = CascadeType.ALL,
+    mappedBy = "readingRoom",
+    orphanRemoval = true)
+  private Set<PatronPermissionEntity> patronPermissions = new LinkedHashSet<>();
 
   public void removeServicePoints(ReadingRoomServicePointEntity readingRoomServicePointEntity) {
     readingRoomServicePointEntity.setReadingRoom(null);

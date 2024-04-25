@@ -52,7 +52,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
   @Test
   void updatePatronPermissionsByUserId_Success() {
     List<PatronPermissionEntity> patronPermissionEntities = List.of(new PatronPermissionEntity());
-    doNothing().when(userService).validatePatron(any(), any());
+    doNothing().when(userService).validatePatronPermissions(any(), any());
     when(mapper.toEntityList(any())).thenReturn(patronPermissionEntities);
     when(patronPermissionsRepository.saveAll(patronPermissionEntities)).thenReturn(patronPermissionEntities);
     assertNotNull(patronPermissionsService.updatePatronPermissionsByUserId(UUID.randomUUID(),
@@ -65,22 +65,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
   void updatePatronPermissionsByUserId_UnMatchedPatronIdAndUserId() {
     UUID differentId = UUID.fromString("7a5abc9f-f3d7-4856-b8d7-6712462ca009");
     patronPermission.setUserId(differentId);
-    doThrow(IllegalArgumentException.class).when(userService).validatePatron(patronId, patronPermissions);
+    doThrow(IllegalArgumentException.class).when(userService).validatePatronPermissions(patronId, patronPermissions);
     assertThrows(IllegalArgumentException.class, () -> {
       patronPermissionsService.updatePatronPermissionsByUserId(patronId, patronPermissions);
     });
-    verify(userService, times(1)).validatePatron(patronId, patronPermissions);
+    verify(userService, times(1)).validatePatronPermissions(patronId, patronPermissions);
   }
 
   @Test
    void testUpdatePatronPermissionsByUserId_PatronIdNotFound() {
 
     List<PatronPermission> patronPermissions = new ArrayList<>();
-    doThrow(PatronPermissionsException.class).when(userService).validatePatron(patronId, patronPermissions);
+    doThrow(PatronPermissionsException.class).when(userService).validatePatronPermissions(patronId, patronPermissions);
     assertThrows(PatronPermissionsException.class, () -> {
       patronPermissionsService.updatePatronPermissionsByUserId(patronId, patronPermissions);
     });
-    verify(userService, times(1)).validatePatron(patronId, patronPermissions);
+    verify(userService, times(1)).validatePatronPermissions(patronId, patronPermissions);
   }
 
 

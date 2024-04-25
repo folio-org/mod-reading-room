@@ -65,6 +65,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("deleteReadingRoomById:: soft deleting reading room with id {}", readingRoomId);
     ReadingRoomEntity readingRoomEntity = getReadingRoomByIdOrThrow(readingRoomId);
     readingRoomEntity.setDeleted(true);
+    readingRoomEntity.getServicePoints().clear();
     readingRoomRepository.save(readingRoomEntity);
   }
 

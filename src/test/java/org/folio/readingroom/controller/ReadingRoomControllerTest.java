@@ -558,9 +558,9 @@ class ReadingRoomControllerTest extends BaseIT {
         containsInAnyOrder(READING_ROOM_NAME, "test")))
       .andExpect(jsonPath("$.readingRooms[*].isPublic",
         containsInAnyOrder(true, false)))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].id",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].value",
         containsInAnyOrder(SERVICE_POINT_ID1.toString())))
-      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].name",
+      .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].label",
         containsInAnyOrder(SERVICE_POINT_NAME1)));
 
   }

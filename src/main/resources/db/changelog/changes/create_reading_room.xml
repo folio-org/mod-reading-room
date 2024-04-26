@@ -11,7 +11,7 @@
         <constraints primaryKey="true" primaryKeyName="pk_readingroom_id"/>
       </column>
       <column name="name" type="text">
-        <constraints unique="true" nullable="false"/>
+        <constraints nullable="false"/>
       </column>
       <column name="is_public" type="boolean">
         <constraints nullable="false"/>

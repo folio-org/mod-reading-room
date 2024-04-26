@@ -179,9 +179,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-      .andExpect(status().is(409))
-      .andExpect(content().string(containsString(
-        "duplicate key value violates unique constraint")));
+      .andExpect(status().is(201));
 
     // creating Reading room without reading room object
     this.mockMvc.perform(
@@ -561,9 +559,9 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(jsonPath("$.readingRooms[*].isPublic",
         containsInAnyOrder(true, false)))
       .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].value",
-        containsInAnyOrder(SERVICE_POINT_ID1.toString(), SERVICE_POINT_ID2.toString())))
+        containsInAnyOrder(SERVICE_POINT_ID1.toString())))
       .andExpect(jsonPath("$.readingRooms[*].servicePoints[*].label",
-        containsInAnyOrder(SERVICE_POINT_NAME1, SERVICE_POINT_NAME2)));
+        containsInAnyOrder(SERVICE_POINT_NAME1)));
 
   }
 
@@ -584,6 +582,17 @@ class ReadingRoomControllerTest extends BaseIT {
     this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
         .headers(defaultHeaders()))
       .andExpect(status().isNoContent());
+
+    // Trying to create one more reading room with same servicePoints which was associated with deleted RR
+    readingRoom = createReadingRoom(UUID.randomUUID(), false);
+    readingRoom.servicePoints(servicePoints);
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
   }
 
   @Test

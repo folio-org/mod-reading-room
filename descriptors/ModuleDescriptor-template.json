@@ -52,7 +52,7 @@
         },
         {
           "methods": ["POST"],
-          "pathPattern": "/reading-room/access-log",
+          "pathPattern": "/reading-room/{readingRoomId}/access-log",
           "permissionsRequired": [
             "reading-room.access-log.post"
           ],

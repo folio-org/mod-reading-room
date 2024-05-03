@@ -1,6 +1,8 @@
 package org.folio.readingroom.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -8,12 +10,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import feign.FeignException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import feign.FeignException;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
@@ -95,6 +96,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
     });
     verify(userService, times(1)).validatePatronPermissions(patronId, patronPermissions);
   }
+
   @Test
   void getPatronPermission_Success() {
     when(readingRoomRepository.findReadingRoomsByUserId(any(UUID.class)))

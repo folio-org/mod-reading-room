@@ -6,4 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatronPermissionsRepository extends JpaRepository<PatronPermissionEntity, UUID> { }
+public interface PatronPermissionRepository extends JpaRepository<PatronPermissionEntity, UUID> { }

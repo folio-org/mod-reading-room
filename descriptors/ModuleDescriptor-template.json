@@ -128,12 +128,12 @@
       "description": "create access log for reading room"
     },
     {
-      "permissionName": "reading-room-patron-permission.item.get",
+      "permissionName": "reading-room.patron-permission.item.get",
       "displayName": "get patron permission of all reading rooms",
       "description": "get patron permission of all reading rooms"
     },
     {
-      "permissionName": "reading-room-patron-permission.item.put",
+      "permissionName": "reading-room.patron-permission.item.put",
       "displayName": "update or create reading room patron permission",
       "description": "update or create reading room patron permission"
     }

@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.client.feign.UsersClient;
 import org.folio.readingroom.domain.dto.PatronPermission;
-import org.folio.readingroom.exception.PatronPermissionsException;
+import org.folio.readingroom.exception.PatronPermissionException;
 import org.folio.readingroom.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +31,9 @@ public class UserServiceImpl implements UserService {
     try {
       usersClient.getUserById(String.valueOf(patronId));
     } catch (FeignException.NotFound ex) {
-      throw new PatronPermissionsException("patronId does not exist in users record");
+      throw new PatronPermissionException("patronId does not exist in users record");
     } catch (Exception ex) {
-      throw new PatronPermissionsException("Error fetching patron: " + ex.getMessage());
+      throw new PatronPermissionException("Error fetching patron: " + ex.getMessage());
     }
   }
 }

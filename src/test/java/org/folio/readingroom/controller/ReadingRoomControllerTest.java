@@ -27,7 +27,7 @@ import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.AccessLogRepository;
-import org.folio.readingroom.repository.PatronPermissionsRepository;
+import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.service.SystemUserScopedExecutionService;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class ReadingRoomControllerTest extends BaseIT {
   @Autowired
   private ReadingRoomRepository readingRoomRepository;
   @Autowired
-  private PatronPermissionsRepository patronPermissionsRepository;
+  private PatronPermissionRepository patronPermissionRepository;
   @Autowired
   private AccessLogRepository accessLogRepository;
   @Autowired
@@ -646,7 +646,7 @@ class ReadingRoomControllerTest extends BaseIT {
 
   private void removeReadingRoomIfExists() {
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
-      patronPermissionsRepository.deleteAll();
+      patronPermissionRepository.deleteAll();
       accessLogRepository.deleteAll();
       readingRoomRepository.deleteAll();
     });

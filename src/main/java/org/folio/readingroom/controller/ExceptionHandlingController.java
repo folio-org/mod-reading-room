@@ -61,6 +61,11 @@ public class ExceptionHandlingController {
   @ExceptionHandler({DataIntegrityViolationException.class})
   public Errors handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
     logExceptionMessage(ex);
+    Throwable rootCause = ex.getRootCause();
+    if (rootCause != null && rootCause.getMessage().contains("violates foreign key constraint")) {
+      return createExternalError("Foreign key constraint violation:"
+        + " The referenced data does not exist.", DUPLICATE_ERROR);
+    }
     return createExternalError(Objects.requireNonNull(ex.getRootCause()).getMessage(), DUPLICATE_ERROR);
   }
 

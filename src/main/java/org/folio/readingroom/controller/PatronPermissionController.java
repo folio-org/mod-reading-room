@@ -5,7 +5,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.PatronPermission;
-import org.folio.readingroom.service.PatronPermissionsService;
+import org.folio.readingroom.service.PatronPermissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Log4j2
 public class PatronPermissionController implements org.folio.readingroom.rest.resource.ReadingRoomPatronPermissionApi {
-  private final PatronPermissionsService patronPermissionsService;
+  private final PatronPermissionService patronPermissionService;
 
   @Override
   public ResponseEntity<List<PatronPermission>> getPatronPermissionsByUserId(UUID patronId, UUID servicePointId) {
     log.info("getPatronPermissionsByUserId:: Updating patronPermission for patron {}", patronId);
     return ResponseEntity.status(HttpStatus.OK)
-      .body(patronPermissionsService.getPatronPermissionsByUserId(patronId, servicePointId));
+      .body(patronPermissionService.getPatronPermissionsByUserId(patronId, servicePointId));
   }
 
   @Override
@@ -28,7 +28,7 @@ public class PatronPermissionController implements org.folio.readingroom.rest.re
     List<PatronPermission> patronPermission) {
     log.info("updatePatronPermissionsByUserId:: Updating patronPermission for patron {}", patronId);
     return ResponseEntity.status(HttpStatus.OK)
-      .body(patronPermissionsService
+      .body(patronPermissionService
         .updatePatronPermissionsByUserId(patronId, patronPermission));
   }
 }

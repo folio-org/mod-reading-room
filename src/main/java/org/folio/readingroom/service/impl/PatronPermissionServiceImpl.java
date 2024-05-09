@@ -11,9 +11,9 @@ import org.folio.readingroom.domain.dto.Metadata;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
-import org.folio.readingroom.repository.PatronPermissionsRepository;
+import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
-import org.folio.readingroom.service.PatronPermissionsService;
+import org.folio.readingroom.service.PatronPermissionService;
 import org.folio.readingroom.service.UserService;
 import org.folio.readingroom.service.converter.Mapper;
 import org.springframework.stereotype.Service;
@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Log4j2
-public class PatronPermissionsServiceImpl implements PatronPermissionsService {
-  private final PatronPermissionsRepository patronPermissionsRepository;
+public class PatronPermissionServiceImpl implements PatronPermissionService {
+  private final PatronPermissionRepository patronPermissionRepository;
   private final ReadingRoomRepository readingRoomRepository;
   private final Mapper mapper;
   private final UserService userService;
@@ -32,7 +32,7 @@ public class PatronPermissionsServiceImpl implements PatronPermissionsService {
                                                                 List<PatronPermission> patronPermissions) {
     userService.validatePatronPermissions(patronId, patronPermissions);
     List<PatronPermissionEntity> entities = mapper.toEntityList(patronPermissions);
-    patronPermissionsRepository.saveAll(entities);
+    patronPermissionRepository.saveAll(entities);
     return patronPermissions;
   }
 

@@ -68,7 +68,7 @@
           "methods": ["GET"],
           "pathPattern": "/reading-room-patron-permission/{patronId}",
           "permissionsRequired": [
-            "reading-room-patron-permission.item.get"
+            "reading-room.patron-permission.item.get"
           ],
           "modulePermissions": []
         },
@@ -76,7 +76,7 @@
           "methods": ["PUT"],
           "pathPattern": "/reading-room-patron-permission/{patronId}",
           "permissionsRequired": [
-            "reading-room-patron-permission.item.put"
+            "reading-room.patron-permission.item.put"
           ],
           "modulePermissions": [
             "users.item.get"

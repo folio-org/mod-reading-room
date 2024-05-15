@@ -11,6 +11,7 @@ import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
+import org.folio.readingroom.domain.projection.PatronPermissionProjection;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
@@ -59,6 +60,12 @@ public interface Mapper {
   @Mapping(target = "metadata.updatedByUserId", source = "updatedBy")
   @Mapping(target = "metadata.updatedDate", source = "updatedDate")
   ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
+
+  @Mapping(target = "metadata.createdByUserId", source = "createdBy")
+  @Mapping(target = "metadata.createdDate", source = "createdDate")
+  @Mapping(target = "metadata.updatedByUserId", source = "updatedBy")
+  @Mapping(target = "metadata.updatedDate", source = "updatedDate")
+  PatronPermission toDto(PatronPermissionProjection patronPermissionProjection);
 
   default ReadingRoomCollection toDto(Page<ReadingRoomEntity> readingRoomEntityPage, boolean includeDeleted) {
     var readingRooms = readingRoomEntityPage.getContent();

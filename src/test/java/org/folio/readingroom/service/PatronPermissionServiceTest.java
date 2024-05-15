@@ -12,12 +12,12 @@ import static org.mockito.Mockito.when;
 
 import feign.FeignException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
+import org.folio.readingroom.domain.projection.PatronPermissionProjection;
 import org.folio.readingroom.exception.PatronPermissionException;
 import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
@@ -100,7 +100,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
   @Test
   void getPatronPermission_Success() {
     when(readingRoomRepository.findReadingRoomsByUserId(any(UUID.class)))
-      .thenReturn(Collections.singletonList(readingRoomEntity));
+      .thenReturn(List.of(new PatronPermissionProjection[]{}));
     doNothing().when(userService).validatePatronExistence(any(UUID.class));
     patronPermissionsService.getPatronPermissionsByUserId(UUID.randomUUID(), null);
     verify(readingRoomRepository).findReadingRoomsByUserId(any());
@@ -109,11 +109,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
   @Test
   void getPatronPermissionWithEmptyReadingRoom() {
     when(readingRoomRepository.findReadingRoomsByUserIdAndServicePointId(any(UUID.class), any(UUID.class)))
-      .thenReturn(null);
+      .thenReturn(List.of());
     doNothing().when(userService).validatePatronExistence(any(UUID.class));
     List<PatronPermission> patronPermissions =
       patronPermissionsService.getPatronPermissionsByUserId(UUID.randomUUID(), UUID.randomUUID());
-    assertEquals(1, patronPermissions.size());
+    assertEquals(0, patronPermissions.size());
     verify(readingRoomRepository).findReadingRoomsByUserIdAndServicePointId(any(), any());
   }
 

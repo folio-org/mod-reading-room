@@ -88,8 +88,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
   @Test
    void testUpdatePatronPermissionsByUserId_PatronIdNotFound() {
-
-    List<PatronPermission> patronPermissions = new ArrayList<>();
     doThrow(PatronPermissionException.class).when(userService).validatePatronPermissions(patronId, patronPermissions);
     assertThrows(PatronPermissionException.class, () -> {
       patronPermissionsService.updatePatronPermissionsByUserId(patronId, patronPermissions);
@@ -111,8 +109,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
     when(readingRoomRepository.findReadingRoomsByUserIdAndServicePointId(any(UUID.class), any(UUID.class)))
       .thenReturn(List.of());
     doNothing().when(userService).validatePatronExistence(any(UUID.class));
-    List<PatronPermission> patronPermissions =
-      patronPermissionsService.getPatronPermissionsByUserId(UUID.randomUUID(), UUID.randomUUID());
+    patronPermissions = patronPermissionsService.getPatronPermissionsByUserId(UUID.randomUUID(), UUID.randomUUID());
     assertEquals(0, patronPermissions.size());
     verify(readingRoomRepository).findReadingRoomsByUserIdAndServicePointId(any(), any());
   }

@@ -2,6 +2,7 @@ package org.folio.readingroom.service.converter;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
@@ -11,6 +12,7 @@ import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
+import org.folio.readingroom.domain.projection.PatronPermissionProjection;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
@@ -60,6 +62,12 @@ public interface Mapper {
   @Mapping(target = "metadata.updatedDate", source = "updatedDate")
   ReadingRoom toDto(ReadingRoomEntity readingRoomEntity);
 
+  @Mapping(target = "metadata.createdByUserId", source = "createdBy")
+  @Mapping(target = "metadata.createdDate", source = "createdDate")
+  @Mapping(target = "metadata.updatedByUserId", expression = "java(setUpdatedByUserId(patronPermissionProjection))")
+  @Mapping(target = "metadata.updatedDate", expression = "java(setUpdatedDate(patronPermissionProjection))")
+  PatronPermission toDto(PatronPermissionProjection patronPermissionProjection);
+
   default ReadingRoomCollection toDto(Page<ReadingRoomEntity> readingRoomEntityPage, boolean includeDeleted) {
     var readingRooms = readingRoomEntityPage.getContent();
     if (!includeDeleted) {
@@ -69,6 +77,16 @@ public interface Mapper {
         .toList();
     }
     return new ReadingRoomCollection(toDtoList(readingRooms), readingRooms.size());
+  }
+
+  default String setUpdatedDate(PatronPermissionProjection patronPermissionProjection) {
+    return patronPermissionProjection.getUpdatedDate() != null
+      ? patronPermissionProjection.getUpdatedDate() : patronPermissionProjection.getCreatedDate();
+  }
+
+  default UUID setUpdatedByUserId(PatronPermissionProjection patronPermissionProjection) {
+    return patronPermissionProjection.getUpdatedBy() != null
+      ? patronPermissionProjection.getUpdatedBy() : patronPermissionProjection.getCreatedBy();
   }
 
   @AfterMapping

@@ -12,6 +12,19 @@
           "Content-Type": "application/json"
         }
       }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/users/2205005b-ca51-4a04-87fd-938eefa8f6fd"
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n            \"username\": \"acs-admin\",\n            \"id\": \"2205005b-ca51-4a04-87fd-938eefa8f6fd\",\n            \"barcode\": \"1713146754032433835\",\n            \"active\": true,\n            \"type\": \"patron\",\n            \"patronGroup\": \"3684a786-6671-4268-8ed0-9db82ebca60b\",\n            \"departments\": [],\n            \"proxyFor\": [],\n            \"personal\": {\n                \"lastName\": \"Admin\",\n                \"firstName\": \"acq-admin\",\n                \"addresses\": []\n            },\n            \"createdDate\": \"2024-04-15T02:05:54.070+00:00\",\n            \"updatedDate\": \"2024-04-15T02:05:54.070+00:00\",\n            \"metadata\": {\n                \"createdDate\": \"2024-04-15T02:05:54.067+00:00\",\n                \"createdByUserId\": \"921983a4-9f17-5599-8d22-291399b0df6d\",\n                \"updatedDate\": \"2024-04-15T02:05:54.067+00:00\",\n                \"updatedByUserId\": \"921983a4-9f17-5599-8d22-291399b0df6d\"\n            }",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
     }
   ]
 }

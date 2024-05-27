@@ -1,5 +1,7 @@
 package org.folio.readingroom.controller;
 
+import static org.folio.readingroom.utils.HelperUtils.BAD_GATEWAY_SERVICE_POINT_ID;
+import static org.folio.readingroom.utils.HelperUtils.ERROR_SERVICE_POINT_ID;
 import static org.folio.readingroom.utils.HelperUtils.INVALID_SERVICE_POINT_ID;
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_NAME;
@@ -109,6 +111,28 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().is(422))
       .andExpect(content().string(containsString(
         "ServicePointId " + INVALID_SERVICE_POINT_ID + " doesn't exists in inventory")));
+
+    readingRoom.servicePoints(Set.of(createServicePoint(BAD_GATEWAY_SERVICE_POINT_ID, "test")));
+
+    // creating Reading room with new id but getting bad gateway during service point validation
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(502));
+
+    readingRoom.servicePoints(Set.of(createServicePoint(ERROR_SERVICE_POINT_ID, "test")));
+
+    // creating Reading room with new id but getting exception during service point validation
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().is(500));
 
     readingRoom = createReadingRoom(UUID.randomUUID(), true);
     readingRoom.servicePoints(Set.of(createServicePoint(SERVICE_POINT_ID1, SERVICE_POINT_NAME1),
@@ -437,7 +461,7 @@ class ReadingRoomControllerTest extends BaseIT {
     this.mockMvc.perform(delete("/reading-room/" + READING_ROOM_ID)
         .headers(defaultHeaders()))
       .andExpect(status().isNoContent());
-    //since the only record present is deleted when we retrieve we get 0 records;
+    //since the only record present is deleted when we retrieve we get 0 records
     this.mockMvc.perform(
         get("/reading-room")
           .param("includeDeleted", "false")

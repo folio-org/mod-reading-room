@@ -90,6 +90,30 @@
           "Content-Type": "application/json"
         }
       }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/service-points?query=id==(7c5abc9f-f3d7-4856-b8d7-6712462ca010)"
+      },
+      "response": {
+        "status": 502,
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/service-points?query=id==(7c5abc9f-f3d7-4856-b8d7-6712462ca011)"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
     }
   ]
 }

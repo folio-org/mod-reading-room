@@ -27,7 +27,7 @@ APIs for managing reading room and its related access.
 
 ## API information
 
-dcb API provides the following URLs:
+Reading Room Access API provides the following URLs:
 
 | Method | URL                                             | Permissions | Description                                                                                                                                                                                                                                   |
 |--------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

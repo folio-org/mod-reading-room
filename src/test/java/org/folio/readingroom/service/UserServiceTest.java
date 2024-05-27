@@ -31,8 +31,9 @@ class UserServiceTest {
     var patronPermission = new org.folio.readingroom.domain.dto.PatronPermission();
     patronPermission.setUserId(userId);
     var patronPermissions = List.of(patronPermission);
+    var randomId = UUID.randomUUID();
     assertThrows(IllegalArgumentException.class, () ->
-      userService.validatePatronPermissions(UUID.randomUUID(), patronPermissions));
+      userService.validatePatronPermissions(randomId, patronPermissions));
 
     doNothing().when(usersClient).getUserById(String.valueOf(userId));
     userService.validatePatronPermissions(userId, patronPermissions);

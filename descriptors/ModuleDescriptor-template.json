@@ -57,6 +57,14 @@
             "reading-room.access-log.post"
           ],
           "modulePermissions": []
+        },
+        {
+          "methods": ["GET"],
+          "pathPattern": "/reading-room/access-log",
+          "permissionsRequired": [
+            "reading-room.access-log.get"
+          ],
+          "modulePermissions": []
         }
       ]
     },

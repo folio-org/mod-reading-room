@@ -25,3 +25,19 @@ AccessLog:
         - ALLOWED
         - DENIED
 
+AccessLogCollection:
+  type: "object"
+  description: "A JSON schema for the accessLog Collection"
+  properties:
+    accessLogs:
+      type: "array"
+      description: "The list of accessLog entries"
+      items:
+        $ref: "accessLog.yaml#/AccessLog"
+    totalRecords:
+      type: "integer"
+  additionalProperties: false
+  required:
+    - "accessLogs"
+    - "totalRecords"
+

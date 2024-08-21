@@ -2,6 +2,7 @@ package org.folio.readingroom.service;
 
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
+import org.folio.readingroom.domain.dto.AccessLogCollection;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 
@@ -50,4 +51,15 @@ public interface ReadingRoomService {
    * @return The created access log entry.
    */
   AccessLog createAccessLog(UUID readingRoomId, AccessLog accessLog);
+
+  /**
+   * Retrieves a collection of access log entries based on the given CQL.
+   *
+   * @param query  - The CQL query used to filter the access logs.
+   * @param offset - The offset for pagination, indicating the starting index of the result set.
+   * @param limit -  The maximum number of reading rooms to retrieve.
+   * @return A AccessLogCollection {@code AccessLogCollection} that match the specified CQL query.
+   */
+  AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit);
+
 }

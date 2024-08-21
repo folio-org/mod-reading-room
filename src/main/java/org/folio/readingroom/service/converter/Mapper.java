@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
+import org.folio.readingroom.domain.dto.AccessLogCollection;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
@@ -49,6 +50,8 @@ public interface Mapper {
 
   List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
 
+  List<AccessLog> toDtoAccessLogList(List<AccessLogEntity> accessLogEntities);
+
   @Mapping(target = "value", source = "id")
   @Mapping(target = "label", source = "name")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
@@ -76,7 +79,12 @@ public interface Mapper {
         .filter(readingRoom -> !readingRoom.isDeleted())
         .toList();
     }
-    return new ReadingRoomCollection(toDtoList(readingRooms), readingRooms.size());
+    return new ReadingRoomCollection(toDtoList(readingRooms), (int) readingRoomEntityPage.getTotalElements());
+  }
+
+  default AccessLogCollection toDtoCollection(Page<AccessLogEntity> accessLogEntitiesPage) {
+    var accessLogEntities = toDtoAccessLogList(accessLogEntitiesPage.getContent());
+    return new AccessLogCollection(accessLogEntities, (int) accessLogEntitiesPage.getTotalElements());
   }
 
   default String setUpdatedDate(PatronPermissionProjection patronPermissionProjection) {

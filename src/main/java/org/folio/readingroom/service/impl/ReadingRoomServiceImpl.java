@@ -85,7 +85,6 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     log.debug("getReadingRoomsByCqlQuery:: fetch reading room list by cql query {}, offset {}, "
       + "limit {}, includeDeleted {}", query, offset, limit, includeDeleted);
     var readingRooms = readingRoomRepository.findByCql(query, OffsetRequest.of(offset, limit));
-    log.info("getReadingRoomsByCqlQuery:: readingRooms {}", readingRooms);
     return mapper.toDto(readingRooms, includeDeleted);
   }
 

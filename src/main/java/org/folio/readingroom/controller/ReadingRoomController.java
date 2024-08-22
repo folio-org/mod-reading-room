@@ -62,7 +62,7 @@ public class ReadingRoomController implements ReadingRoomApi {
   @Override
   public ResponseEntity<AccessLogCollection> getAccessLogsByCqlQuery(String query, Integer offset,
                                                                      Integer limit) {
-    log.info("getAccessLogsByCqlQuery:: fetch access logs entries by cql query {}, "
+    log.info("getAccessLogsByCqlQuery:: get access log entries by cql query {}, "
       + "offset {}, limit {}", query, offset, limit);
     return ResponseEntity.status(HttpStatus.OK)
       .body(readingRoomService.getAccessLogsByCqlQuery(query, offset, limit));

@@ -80,6 +80,8 @@ public class HelperUtils {
     accessLog.setPatronId(UUID.randomUUID());
     accessLog.setUserId(UUID.randomUUID());
     accessLog.readingRoomId(READING_ROOM_ID);
+    accessLog.readingRoomName(READING_ROOM_NAME);
+    accessLog.servicePointId(SERVICE_POINT_ID1);
     return accessLog;
   }
 
@@ -89,9 +91,9 @@ public class HelperUtils {
     accessLogEntity.setAction(accessLog.getAction());
     accessLogEntity.setUserId(accessLog.getUserId());
     accessLogEntity.setPatronId(accessLog.getPatronId());
-    var readingRoom = new ReadingRoomEntity();
-    readingRoom.setId(READING_ROOM_ID);
-    accessLogEntity.setReadingRoom(readingRoom);
+    accessLogEntity.setReadingRoomId(READING_ROOM_ID);
+    accessLogEntity.setReadingRoomName(READING_ROOM_NAME);
+    accessLogEntity.setServicePointId(SERVICE_POINT_ID1);
     return accessLogEntity;
   }
 }

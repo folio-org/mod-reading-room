@@ -57,7 +57,7 @@ public interface ReadingRoomService {
    *
    * @param query  - The CQL query used to filter the access logs.
    * @param offset - The offset for pagination, indicating the starting index of the result set.
-   * @param limit -  The maximum number of reading rooms to retrieve.
+   * @param limit -  The maximum number of access log entries to retrieve.
    * @return A AccessLogCollection {@code AccessLogCollection} that match the specified CQL query.
    */
   AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit);

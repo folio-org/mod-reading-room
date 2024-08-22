@@ -10,6 +10,13 @@ AccessLog:
       description: "Id of a reading room"
       type: string
       format: "UUID"
+    readingRoomName:
+      description: "Name of a reading room"
+      type: string
+    servicePointId:
+      description: "Id of a servicePoint which is associated with the reading room"
+      type: string
+      format: "UUID"
     userId:
       description: "Id of a user who allows or denies the user from accessing the reading room"
       type: string

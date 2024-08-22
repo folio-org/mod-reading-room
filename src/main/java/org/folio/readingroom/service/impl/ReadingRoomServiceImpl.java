@@ -103,8 +103,9 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   @Override
   public AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit) {
+    log.debug("getAccessLogsByCqlQuery:: fetch accessLog entries with cql query{}, offset {}, "
+      + "limit {}", query, offset, limit);
     var accessLogs = accessLogRepository.findByCql(query, OffsetRequest.of(offset, limit));
-    log.info("getAccessLogsByCqlQuery:: accessLogs{}", accessLogs);
     return mapper.toDtoCollection(accessLogs);
   }
 

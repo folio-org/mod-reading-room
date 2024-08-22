@@ -45,7 +45,6 @@ public interface Mapper {
   @Mapping(target = "name", source = "label")
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
-  @Mapping(target = "readingRoom.id", source = "accessLog.readingRoomId")
   AccessLogEntity toEntity(AccessLog accessLog);
 
   List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
@@ -56,7 +55,6 @@ public interface Mapper {
   @Mapping(target = "label", source = "name")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
-  @Mapping(target = "readingRoomId", source = "entity.readingRoom.id")
   AccessLog toDto(AccessLogEntity entity);
 
   @Mapping(target = "metadata.createdByUserId", source = "createdBy")
@@ -79,7 +77,7 @@ public interface Mapper {
         .filter(readingRoom -> !readingRoom.isDeleted())
         .toList();
     }
-    return new ReadingRoomCollection(toDtoList(readingRooms), (int) readingRoomEntityPage.getTotalElements());
+    return new ReadingRoomCollection(toDtoList(readingRooms), readingRooms.size());
   }
 
   default AccessLogCollection toDtoCollection(Page<AccessLogEntity> accessLogEntitiesPage) {

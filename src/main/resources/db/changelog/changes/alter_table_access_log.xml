@@ -6,10 +6,10 @@
 
   <changeSet id="alterTableAccessLog" author="vignesh">
     <addColumn tableName="access_log">
-      <column name="readingRoomName" type="text">
+      <column name="reading_room_name" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="servicePointId" type="UUID">
+      <column name="service_point_id" type="UUID">
         <constraints nullable="false"/>
       </column>
     </addColumn>

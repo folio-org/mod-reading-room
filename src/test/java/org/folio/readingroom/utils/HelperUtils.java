@@ -85,6 +85,19 @@ public class HelperUtils {
     return accessLog;
   }
 
+  public static AccessLog createAccessLog(UUID accessLogId, UUID readingRoomId, UUID servicePointId,
+                                          String readingRoomName, AccessLog.ActionEnum actionEnum) {
+    AccessLog accessLog = new AccessLog();
+    accessLog.setId(accessLogId);
+    accessLog.setAction(actionEnum);
+    accessLog.setPatronId(UUID.randomUUID());
+    accessLog.setUserId(UUID.randomUUID());
+    accessLog.readingRoomId(readingRoomId);
+    accessLog.readingRoomName(readingRoomName);
+    accessLog.servicePointId(servicePointId);
+    return accessLog;
+  }
+
   public static AccessLogEntity createAccessLogEntity(AccessLog accessLog) {
     AccessLogEntity accessLogEntity = new AccessLogEntity();
     accessLogEntity.setId(accessLog.getId());

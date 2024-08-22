@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,8 +17,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
+import org.folio.readingroom.domain.dto.AccessLogCollection;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
+import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.exception.IdMismatchException;
@@ -227,5 +230,38 @@ class ReadingRoomServiceTest {
     when(accessLogRepository.findById(any())).thenReturn(Optional.of(accessLogEntity));
     assertThrows(ResourceAlreadyExistException.class, () ->
       readingRoomService.createAccessLog(READING_ROOM_ID, accessLog));
+  }
+
+  @Test
+  void getAccessLogWithValidCqlQuery() {
+    var accessLog1 = createAccessLog(READING_ROOM_ID, AccessLog.ActionEnum.ALLOWED);
+    var accessLogEntity1 = createAccessLogEntity(accessLog1);
+    var accessLogEntities = List.of(accessLogEntity1);
+    Page<AccessLogEntity> accessLogEntityPage = new PageImpl<>(accessLogEntities, PageRequest.of(offset, limit),
+      accessLogEntities.size());
+    when(accessLogRepository.findByCql(eq("cql.allRecords=1"), any()))
+      .thenReturn(accessLogEntityPage);
+    when(readingRoomMapper.toDtoCollection(accessLogEntityPage))
+      .thenReturn(new AccessLogCollection(List.of(accessLog1), 1));
+    var response = readingRoomService.getAccessLogsByCqlQuery("cql.allRecords=1", 0, 10);
+    verify(accessLogRepository).findByCql(any(), any());
+    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
+    assertEquals(1, response.getTotalRecords());
+    assertEquals(accessLog1, response.getAccessLogs().get(0));
+  }
+
+  @Test
+  void getAccessLogWithInvalidValueInCqlQuery() {
+    var randomReadingRoomId = UUID.randomUUID();
+    Page<AccessLogEntity> accessLogEntityPage = new PageImpl<>(List.of(), PageRequest.of(offset, limit), 1);
+    when(accessLogRepository.findByCql(eq("readingRoomId=" + randomReadingRoomId), any()))
+      .thenReturn(accessLogEntityPage);
+    when(readingRoomMapper.toDtoCollection(accessLogEntityPage))
+      .thenReturn(new AccessLogCollection(List.of(), 0));
+    var response = readingRoomService.getAccessLogsByCqlQuery("readingRoomId=" + randomReadingRoomId, 0, 10);
+    verify(accessLogRepository).findByCql(any(), any());
+    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
+    assertEquals(0, response.getTotalRecords());
+    assertEquals(0, response.getAccessLogs().size());
   }
 }

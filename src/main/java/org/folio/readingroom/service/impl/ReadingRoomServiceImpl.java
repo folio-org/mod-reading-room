@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.AccessLog;
+import org.folio.readingroom.domain.dto.AccessLogCollection;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
 import org.folio.readingroom.domain.dto.ServicePoint;
@@ -97,6 +98,14 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
     checkAccessLogExistsAndThrow(accessLog.getId());
     var accessLogEntity = accessLogRepository.save(mapper.toEntity(accessLog));
     return mapper.toDto(accessLogEntity);
+  }
+
+  @Override
+  public AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit) {
+    log.debug("getAccessLogsByCqlQuery:: fetch accessLog entries with cql query{}, offset {}, "
+      + "limit {}", query, offset, limit);
+    var accessLogs = accessLogRepository.findByCql(query, OffsetRequest.of(offset, limit));
+    return mapper.toDtoCollection(accessLogs);
   }
 
   private void checkReadingRoomExistsAndThrow(UUID readingRoomId) {

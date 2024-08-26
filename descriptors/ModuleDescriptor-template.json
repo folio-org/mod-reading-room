@@ -57,6 +57,14 @@
             "reading-room.access-log.post"
           ],
           "modulePermissions": []
+        },
+        {
+          "methods": ["GET"],
+          "pathPattern": "/reading-room/access-log",
+          "permissionsRequired": [
+            "reading-room.access-log.collection.get"
+          ],
+          "modulePermissions": []
         }
       ]
     },
@@ -136,6 +144,11 @@
       "permissionName": "reading-room.patron-permission.item.put",
       "displayName": "update or create reading room patron permission",
       "description": "update or create reading room patron permission"
+    },
+    {
+      "permissionName": "reading-room.access-log.collection.get",
+      "displayName": "Get access log collection",
+      "description": "Get access log collection"
     }
   ],
   "launchDescriptor": {

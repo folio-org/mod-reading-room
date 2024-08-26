@@ -10,6 +10,13 @@ AccessLog:
       description: "Id of a reading room"
       type: string
       format: "UUID"
+    readingRoomName:
+      description: "Name of a reading room"
+      type: string
+    servicePointId:
+      description: "Id of a servicePoint which is associated with the reading room"
+      type: string
+      format: "UUID"
     userId:
       description: "Id of a user who allows or denies the user from accessing the reading room"
       type: string
@@ -24,4 +31,20 @@ AccessLog:
       enum:
         - ALLOWED
         - DENIED
+
+AccessLogCollection:
+  type: "object"
+  description: "A JSON schema for the accessLog Collection"
+  properties:
+    accessLogs:
+      type: "array"
+      description: "The list of accessLog entries"
+      items:
+        $ref: "accessLog.yaml#/AccessLog"
+    totalRecords:
+      type: "integer"
+  additionalProperties: false
+  required:
+    - "accessLogs"
+    - "totalRecords"
 

@@ -84,6 +84,21 @@ paths:
           $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /reading-room/access-log:
+    get:
+      summary: Get list of access logs entries based on Cql query
+      operationId: getAccessLogsByCqlQuery
+      parameters:
+        - $ref: '#/components/parameters/cqlQuery'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/accessLogCollectionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   requestBodies:
     readingRoomBody:
@@ -113,6 +128,12 @@ components:
         application/json:
           schema:
             $ref: "schemas/accessLog.yaml#/AccessLog"
+    accessLogCollectionResponse:
+      description: accessLog Object
+      content:
+        application/json:
+          schema:
+            $ref: "schemas/accessLog.yaml#/AccessLogCollection"
     NotFound:
       description: Resource not found
       content:

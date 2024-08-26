@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
@@ -35,8 +32,13 @@ public class AccessLogEntity extends AuditableEntity {
   @Column(name = "action", nullable = false)
   private ActionEnum action;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "reading_room_id", nullable = false)
-  private ReadingRoomEntity readingRoom;
+  @Column(name = "reading_room_id", nullable = false)
+  private UUID readingRoomId;
+
+  @Column(name = "reading_room_name", nullable = false)
+  private String readingRoomName;
+
+  @Column(name = "service_point_id", nullable = false)
+  private UUID servicePointId;
 
 }

@@ -18,7 +18,7 @@ public class PatronPermissionController implements org.folio.readingroom.rest.re
 
   @Override
   public ResponseEntity<List<PatronPermission>> getPatronPermissionsByUserId(UUID patronId, UUID servicePointId) {
-    log.info("getPatronPermissionsByUserId:: Updating patronPermission for patron {}", patronId);
+    log.info("getPatronPermissionsByUserId:: getting patronPermission for patron {}", patronId);
     return ResponseEntity.status(HttpStatus.OK)
       .body(patronPermissionService.getPatronPermissionsByUserId(patronId, servicePointId));
   }

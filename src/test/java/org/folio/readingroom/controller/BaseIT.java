@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.List;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import org.folio.spring.config.properties.FolioEnvironment;
 import org.folio.spring.integration.XOkapiHeaders;
@@ -43,7 +44,8 @@ public class BaseIT {
   public static final String TENANT = "diku";
   public static final int WIRE_MOCK_PORT = TestSocketUtils.findAvailableTcpPort();
   protected static final String TOKEN = "test_token";
-  protected static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:12-alpine");
+  protected static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>(Objects
+    .toString(System.getenv("TESTCONTAINERS_POSTGRES_IMAGE"), "postgres:16-alpine"));
   protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .setSerializationInclusion(JsonInclude.Include.NON_NULL)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

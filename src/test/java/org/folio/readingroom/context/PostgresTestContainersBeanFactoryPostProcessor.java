@@ -1,5 +1,6 @@
 package org.folio.readingroom.context;
 
+import java.util.Objects;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -13,7 +14,8 @@ import org.testcontainers.junit.jupiter.Container;
 public class PostgresTestContainersBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
   @Container
-  public static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:11-alpine");
+  public static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>(Objects
+    .toString(System.getenv("TESTCONTAINERS_POSTGRES_IMAGE"), "postgres:16-alpine"));
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory)

@@ -2,7 +2,7 @@ package org.folio.readingroom;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import org.folio.spring.liquibase.FolioLiquibaseConfiguration;
 import org.folio.tenant.domain.dto.TenantAttributes;
 import org.folio.tenant.rest.resource.TenantApi;

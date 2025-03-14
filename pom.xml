@@ -10,7 +10,7 @@
   <groupId>org.folio</groupId>
   <artifactId>mod-reading-room</artifactId>
   <name>mod-reading-room</name>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.2.0</version>
   <description>Manage reading room and its related access</description>
   <packaging>jar</packaging>
 
@@ -414,7 +414,7 @@
     <url>https://github.com/folio-org/${project.artifactId}</url>
     <connection>scm:git:git://github.com/folio-org/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:folio-org/${project.artifactId}.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>1.1.0</tag>
   </scm>
 
 </project>

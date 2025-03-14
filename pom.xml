@@ -28,12 +28,12 @@
 
     <!-- runtime dependencies -->
     <folio-spring-support.version>9.0.0</folio-spring-support.version>
-    <mapstruct.version>1.6.2</mapstruct.version>
-    <mvn-failsafe.version>3.2.5</mvn-failsafe.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <mvn-failsafe.version>3.5.2</mvn-failsafe.version>
 
     <!-- test dependencies -->
     <wiremock.version>3.2.0</wiremock.version>
-    <testcontainers.version>1.20.2</testcontainers.version>
+    <testcontainers.version>1.20.6</testcontainers.version>
 
     <!-- Plugins versions -->
     <maven-checkstyle-plugin.version>3.5.0</maven-checkstyle-plugin.version>

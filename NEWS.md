@@ -1,3 +1,6 @@
+## 1.1.0 2025-03-13
+* [FOLIO-4218](https://folio-org.atlassian.net/browse/FOLIO-4218) - Update mod-reading-room to Java 21
+
 ## 1.0.0 2024-10-30
 
 * [MODRR-5](https://folio-org.atlassian.net/browse/MODRR-5) - Maintain access logs for the Reading Room

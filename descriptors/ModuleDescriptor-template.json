@@ -4,11 +4,11 @@
   "requires": [
     {
       "id": "service-points",
-      "version": "3.3"
+      "version": "3.4"
     },
     {
       "id": "users",
-      "version": "16.3"
+      "version": "16.4"
     }
   ],
   "provides": [

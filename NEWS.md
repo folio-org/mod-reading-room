@@ -1,5 +1,5 @@
 ## 1.2.0 2025-08-17
-* re-released with new version for app-reading-room-release
+* re-released with new version for app-reading-room release
 
 ## 1.1.0 2025-03-13
 * [FOLIO-4218](https://folio-org.atlassian.net/browse/FOLIO-4218) - Update mod-reading-room to Java 21

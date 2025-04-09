@@ -1,5 +1,7 @@
 package org.folio.readingroom.controller;
 
+import static org.folio.readingroom.domain.dto.AccessLog.ActionEnum.ALLOWED;
+import static org.folio.readingroom.domain.dto.AccessLog.ActionEnum.DENIED;
 import static org.folio.readingroom.utils.HelperUtils.BAD_GATEWAY_SERVICE_POINT_ID;
 import static org.folio.readingroom.utils.HelperUtils.ERROR_SERVICE_POINT_ID;
 import static org.folio.readingroom.utils.HelperUtils.INVALID_SERVICE_POINT_ID;
@@ -16,6 +18,7 @@ import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Set;
 import java.util.UUID;
-import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionRepository;
@@ -61,7 +63,7 @@ class ReadingRoomControllerTest extends BaseIT {
           .headers(defaultHeaders())
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isCreated())
+      .andExpect(status().isCreated())
       .andExpect(jsonPath("$.id").value(READING_ROOM_ID.toString()))
       .andExpect(jsonPath("$.name").value(READING_ROOM_NAME))
       .andExpect(jsonPath("$.isPublic").value(false))
@@ -633,7 +635,7 @@ class ReadingRoomControllerTest extends BaseIT {
   @Test
   void testCreateAccessLog() throws Exception {
     removeReadingRoomIfExists();
-    var accessLog = createAccessLog(UUID.randomUUID(), AccessLog.ActionEnum.ALLOWED);
+    var accessLog = createAccessLog(UUID.randomUUID(), ALLOWED);
     this.mockMvc.perform(post("/reading-room/" + UUID.randomUUID() + "/access-log")
         .content(asJsonString(accessLog))
         .headers(defaultHeaders())
@@ -702,22 +704,20 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(status().isCreated());
 
     // access log entry is created for readingRoomId1
-    var accessLog = createAccessLog(UUID.randomUUID(), readingRoomId1, SERVICE_POINT_ID1, readingRoomName1,
-      AccessLog.ActionEnum.ALLOWED);
+    var accessLog1 = createAccessLog(UUID.randomUUID(), readingRoomId1, SERVICE_POINT_ID1, readingRoomName1, ALLOWED);
 
     this.mockMvc.perform(post("/reading-room/" + readingRoomId1 + "/access-log")
-        .content(asJsonString(accessLog))
+        .content(asJsonString(accessLog1))
         .headers(defaultHeaders())
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().is(201));
 
     // access log entry is created for readingRoomId2
-    accessLog = createAccessLog(UUID.randomUUID(), readingRoomId2, SERVICE_POINT_ID2, readingRoomName2,
-      AccessLog.ActionEnum.ALLOWED);
+    var accessLog2 = createAccessLog(UUID.randomUUID(), readingRoomId2, SERVICE_POINT_ID2, readingRoomName2, DENIED);
 
     this.mockMvc.perform(post("/reading-room/" + readingRoomId2 + "/access-log")
-        .content(asJsonString(accessLog))
+        .content(asJsonString(accessLog2))
         .headers(defaultHeaders())
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON))
@@ -763,6 +763,32 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(jsonPath("accessLogs", hasSize(1)))
       .andExpect(jsonPath("$.accessLogs[0].readingRoomId",
         containsString(readingRoomId2.toString())));
+
+    // passing valid readingRoomName and action in cql query
+    this.mockMvc.perform(
+        get("/reading-room/access-log")
+          .param("query", "action=ALLOWED")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(1))
+      .andExpect(jsonPath("accessLogs").isArray())
+      .andExpect(jsonPath("accessLogs", hasSize(1)))
+      .andExpect(jsonPath("$.accessLogs[0].readingRoomId", is(readingRoomId1.toString())));
+
+    // passing valid readingRoomName and action in cql query
+    this.mockMvc.perform(
+        get("/reading-room/access-log")
+          .param("query", "action=DENIED")
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("totalRecords").value(1))
+      .andExpect(jsonPath("accessLogs").isArray())
+      .andExpect(jsonPath("accessLogs", hasSize(1)))
+      .andExpect(jsonPath("$.accessLogs[0].readingRoomId", is(readingRoomId2.toString())));
 
     // Passing invalid readingRoomId in cql query
     this.mockMvc.perform(

@@ -1,3 +1,6 @@
+## 1.2.1 2025-04-10
+* [MODRR-32](https://folio-org.atlassian.net/browse/MODRR-32) Fix querying by enum values
+
 ## 1.2.0 2025-08-17
 * re-released with new version for app-reading-room release
 

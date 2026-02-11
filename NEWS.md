@@ -1,3 +1,6 @@
+## 1.3.0 In Progress
+* [MODRR-40](https://folio-org.atlassian.net/browse/MODRR-40) - Use GitHub Workflows for Maven
+
 ## 1.2.0 2025-08-17
 * re-released with new version for app-reading-room release
 

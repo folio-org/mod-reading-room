@@ -29,7 +29,7 @@
     <!-- runtime dependencies -->
     <folio-spring-support.version>9.0.0</folio-spring-support.version>
     <mapstruct.version>1.6.3</mapstruct.version>
-    <mvn-failsafe.version>3.5.4</mvn-failsafe.version>
+    <mvn-failsafe.version>3.5.5</mvn-failsafe.version>
     <hibernate.version>6.5.3.Final</hibernate.version>
 
     <!-- test dependencies -->
@@ -41,7 +41,7 @@
     <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
     <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
     <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
-    <openapi-generator.version>7.19.0</openapi-generator.version>
+    <openapi-generator.version>7.20.0</openapi-generator.version>
   </properties>
 
   <dependencies>

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.3</version>
+    <version>4.0.3</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.folio</groupId>
@@ -27,7 +27,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- runtime dependencies -->
-    <folio-spring-support.version>9.0.0</folio-spring-support.version>
+    <folio-spring-support.version>9.1.0</folio-spring-support.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <mvn-failsafe.version>3.5.5</mvn-failsafe.version>
     <hibernate.version>6.5.3.Final</hibernate.version>
@@ -203,7 +203,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.15.0</version>
+            <version>13.2.0</version>
           </dependency>
         </dependencies>
         <executions>

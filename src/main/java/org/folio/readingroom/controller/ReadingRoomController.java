@@ -54,7 +54,7 @@ public class ReadingRoomController implements ReadingRoomApi {
 
   @Override
   public ResponseEntity<AccessLog> createAccessLog(UUID readingRoomId, AccessLog accessLog) {
-    log.info("createAccessLog:: creating access log for readingRoomId {} , accessLog {}", readingRoomId, accessLog);
+    log.info("createAccessLog:: creating access log {} for readingRoomId {}", accessLog.getId(), readingRoomId);
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(readingRoomService.createAccessLog(readingRoomId, accessLog));
   }
@@ -62,8 +62,7 @@ public class ReadingRoomController implements ReadingRoomApi {
   @Override
   public ResponseEntity<AccessLogCollection> getAccessLogsByCqlQuery(String query, Integer offset,
                                                                      Integer limit) {
-    log.info("getAccessLogsByCqlQuery:: get access log entries by cql query {}, "
-      + "offset {}, limit {}", query, offset, limit);
+    log.info("getAccessLogsByCqlQuery:: get access log entries with offset {}, limit {}", offset, limit);
     return ResponseEntity.status(HttpStatus.OK)
       .body(readingRoomService.getAccessLogsByCqlQuery(query, offset, limit));
   }

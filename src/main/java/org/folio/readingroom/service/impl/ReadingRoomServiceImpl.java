@@ -90,7 +90,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   @Override
   public AccessLog createAccessLog(UUID readingRoomId, AccessLog accessLog) {
-    log.debug("createAccessLog:: create access log with {}", accessLog);
+    log.debug("createAccessLog:: create access log {} for readingRoomId {}", accessLog.getId(), readingRoomId);
     if (!readingRoomId.equals(accessLog.getReadingRoomId())) {
       throw new IdMismatchException(
         "The reading room ID provided in the request URL does not match the ID of the resource in the request body");
@@ -102,8 +102,7 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
 
   @Override
   public AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit) {
-    log.debug("getAccessLogsByCqlQuery:: fetch accessLog entries with cql query{}, offset {}, "
-      + "limit {}", query, offset, limit);
+    log.debug("getAccessLogsByCqlQuery:: fetch access log entries with offset {}, limit {}", offset, limit);
     var accessLogs = accessLogRepository.findByCql(query, OffsetRequest.of(offset, limit));
     return mapper.toDtoCollection(accessLogs);
   }

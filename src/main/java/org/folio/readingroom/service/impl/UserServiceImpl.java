@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
   private final UsersClient usersClient;
 
   public void validatePatronPermissions(UUID patronId, List<PatronPermission> patronPermissions) {
-    log.info("validatePatron:: Validating patron with id {}", patronId);
+    log.info("validatePatron:: validating patron permissions");
     boolean anyInvalid = patronPermissions.stream()
       .anyMatch(permission -> !patronId.equals(permission.getUserId()));
     if (anyInvalid) {

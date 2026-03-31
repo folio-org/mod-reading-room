@@ -60,11 +60,7 @@ public class BaseIT {
 
   @BeforeAll
   static void beforeAll(@Autowired MockMvc mockMvc, @Autowired FolioEnvironment folioEnvironment) {
-    wireMockServer = new WireMockServer(
-      WireMockConfiguration.options()
-        .port(WIRE_MOCK_PORT)
-        .notifier(new ConsoleNotifier(true))
-    );
+    wireMockServer = new WireMockServer(WIRE_MOCK_PORT);
     wireMockServer.start();
     setUpTenant(mockMvc);
     folioEnvironment.setOkapiUrl(getOkapiUrl());

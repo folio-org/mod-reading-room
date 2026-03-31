@@ -48,10 +48,12 @@ class UserServiceTest {
     userService.validatePatronExistence(userId);
     verify(readingRoomUsersClient).getReadingRoomUserById(String.valueOf(userId));
 
-    doThrow(HttpClientErrorException.NotFound.class).when(readingRoomUsersClient).getReadingRoomUserById(String.valueOf(userId));
+    doThrow(HttpClientErrorException.NotFound.class)
+      .when(readingRoomUsersClient).getReadingRoomUserById(String.valueOf(userId));
     assertThrows(PatronPermissionException.class, () -> userService.validatePatronExistence(userId));
 
-    doThrow(HttpServerErrorException.BadGateway.class).when(readingRoomUsersClient).getReadingRoomUserById(String.valueOf(userId));
+    doThrow(HttpServerErrorException.BadGateway.class)
+      .when(readingRoomUsersClient).getReadingRoomUserById(String.valueOf(userId));
     assertThrows(PatronPermissionException.class, () -> userService.validatePatronExistence(userId));
   }
 }

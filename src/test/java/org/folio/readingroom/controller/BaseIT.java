@@ -10,9 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.List;
 import java.util.Objects;
-
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import lombok.SneakyThrows;
 import org.folio.spring.config.properties.FolioEnvironment;
 import org.folio.spring.integration.XOkapiHeaders;
@@ -33,7 +30,6 @@ import org.springframework.test.util.TestSocketUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = BaseIT.DockerPostgresDataSourceInitializer.class)

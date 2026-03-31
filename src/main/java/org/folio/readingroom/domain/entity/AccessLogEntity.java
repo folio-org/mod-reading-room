@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.folio.readingroom.domain.base.AuditableEntity;
 import org.folio.readingroom.domain.dto.AccessLog.ActionEnum;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -33,6 +34,10 @@ public class AccessLogEntity extends AuditableEntity {
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(name = "action", columnDefinition = "accessLogActionEnum", nullable = false)
+  @ColumnTransformer(
+    read  = "action::text",
+    write = "?::accessLogActionEnum"
+  )
   private ActionEnum action;
 
   @Column(name = "reading_room_id", nullable = false)

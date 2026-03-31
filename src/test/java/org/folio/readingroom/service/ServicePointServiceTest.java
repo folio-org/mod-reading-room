@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import org.folio.readingroom.client.feign.ServicePointClient;
+import org.folio.readingroom.client.ServicePointClient;
 import org.folio.readingroom.service.impl.ServicePointServiceImpl;
 import org.folio.spring.model.ResultList;
 import org.junit.jupiter.api.BeforeEach;

@@ -8,7 +8,6 @@ import static org.folio.readingroom.utils.ErrorHelper.ErrorCode.VALIDATION_ERROR
 import static org.folio.readingroom.utils.ErrorHelper.createExternalError;
 import static org.folio.readingroom.utils.ErrorHelper.createInternalError;
 
-import feign.FeignException;
 import java.util.Objects;
 import lombok.extern.log4j.Log4j2;
 import org.folio.readingroom.domain.dto.Error;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
@@ -70,8 +70,8 @@ public class ExceptionHandlingController {
   }
 
   @ResponseStatus(HttpStatus.BAD_GATEWAY)
-  @ExceptionHandler(FeignException.BadGateway.class)
-  public Errors handleBadGatewayException(FeignException.BadGateway ex) {
+  @ExceptionHandler(HttpServerErrorException.BadGateway.class)
+  public Errors handleBadGatewayException(HttpServerErrorException.BadGateway ex) {
     logExceptionMessage(ex);
     return createInternalError(ex.getMessage(), BAD_GATEWAY);
   }

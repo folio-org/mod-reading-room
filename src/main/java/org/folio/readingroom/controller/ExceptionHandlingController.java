@@ -89,7 +89,7 @@ public class ExceptionHandlingController {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
   public Errors handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
     logExceptionMessage(ex);
     var errorList = ex.getBindingResult().getFieldErrors()
@@ -107,7 +107,7 @@ public class ExceptionHandlingController {
   }
 
   @ExceptionHandler(ServicePointException.class)
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
   public Errors handleInvalidServicePointException(ServicePointException ex) {
     logExceptionMessage(ex);
     var errorList = ex.getInvalidIds()
@@ -125,7 +125,7 @@ public class ExceptionHandlingController {
   }
 
   @ExceptionHandler(IdMismatchException.class)
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
   public Errors handleIdMismatchException(IdMismatchException ex) {
     logExceptionMessage(ex);
     return createExternalError(ex.getMessage(), VALIDATION_ERROR);

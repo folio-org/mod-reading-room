@@ -8,12 +8,12 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class CqlHelper {
-  public static String getAnyMatch(List<UUID> uuidList) {
-    return uuidList
+  public static String getAnyMatch(String field, List<UUID> uuidList) {
+    return field + "==(" + uuidList
       .stream()
       .filter(Objects::nonNull)
       .map(UUID::toString)
-      .collect(Collectors.joining(" or "));
+      .collect(Collectors.joining(" or ")) + ")";
   }
 
 }

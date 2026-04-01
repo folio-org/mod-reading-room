@@ -3,7 +3,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(7c5abc9f-f3d7-4856-b8d7-6712462ca008 or 9765c56f-608d-4c93-94fe-f365f16e6970)"
@@ -45,7 +45,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(9765c56f-608d-4c93-94fe-f365f16e6970 or 7c5abc9f-f3d7-4856-b8d7-6712462ca008)"
@@ -87,7 +87,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(7c5abc9f-f3d7-4856-b8d7-6712462ca008)"
@@ -119,7 +119,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(9765c56f-608d-4c93-94fe-f365f16e6970)"
@@ -151,7 +151,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(9765c56f-608d-4c93-94fe-f365f16e6971)"
@@ -183,7 +183,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(9865c56f-608d-4c93-94fe-f365f16e6971)"
@@ -215,7 +215,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(7c5abc9f-f3d7-4856-b8d7-6712462ca009)"
@@ -236,7 +236,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(7c5abc9f-f3d7-4856-b8d7-6712462ca010)"
@@ -253,7 +253,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPath": "/service-points/",
+        "urlPath": "/service-points",
         "queryParameters": {
           "query": {
             "equalTo": "id==(7c5abc9f-f3d7-4856-b8d7-6712462ca011)"

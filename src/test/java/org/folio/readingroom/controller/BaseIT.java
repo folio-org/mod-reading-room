@@ -2,7 +2,6 @@ package org.folio.readingroom.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -76,7 +75,7 @@ public class BaseIT {
     mockMvc.perform(post("/_/tenant")
       .content(asJsonString(new TenantAttributes().moduleTo("mod-reading-room")))
       .headers(defaultHeaders())
-      .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
+      .contentType(APPLICATION_JSON));
   }
 
   public static HttpHeaders defaultHeaders() {

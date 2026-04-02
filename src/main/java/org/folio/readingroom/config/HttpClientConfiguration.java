@@ -10,7 +10,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class HttpClientConfiguration {
 
   @Bean
-  public ReadingRoomUsersClient usersClient(HttpServiceProxyFactory factory) {
+  public ReadingRoomUsersClient readingRoomUsersClient(HttpServiceProxyFactory factory) {
     return factory.createClient(ReadingRoomUsersClient.class);
   }
 

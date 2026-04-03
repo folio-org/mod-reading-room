@@ -21,7 +21,7 @@ public class ServicePointServiceImpl implements ServicePointService {
     log.debug("fetchInvalidServicePointList:: fetching invalid servicePointIds {}", servicePointIds);
     List<UUID> inventoryServicePointIds = servicePointClient
       .getServicePointsByIds(CqlHelper.getAnyMatch("id", servicePointIds))
-      .getResult()
+      .getRecords()
       .stream()
       .map(inventoryServicePoint -> UUID.fromString(inventoryServicePoint.id()))
       .toList();

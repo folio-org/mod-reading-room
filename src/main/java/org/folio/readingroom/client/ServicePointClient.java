@@ -1,7 +1,7 @@
 package org.folio.readingroom.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.folio.spring.model.ResultList;
+import org.folio.common.domain.model.ResultList;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;

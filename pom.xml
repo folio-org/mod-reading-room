@@ -28,6 +28,7 @@
 
     <!-- runtime dependencies -->
     <folio-spring-support.version>10.0.0-RC1</folio-spring-support.version>
+    <folio-backend-common.version>2.0.0</folio-backend-common.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <mvn-failsafe.version>3.5.5</mvn-failsafe.version>
 
@@ -51,8 +52,8 @@
     </dependency>
     <dependency>
       <groupId>org.folio</groupId>
-      <artifactId>folio-spring-system-user</artifactId>
-      <version>${folio-spring-support.version}</version>
+      <artifactId>folio-backend-common</artifactId>
+      <version>${folio-backend-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.folio</groupId>

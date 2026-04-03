@@ -2,6 +2,7 @@ package org.folio.readingroom.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -10,7 +11,6 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.List;
 import java.util.Objects;
 import lombok.SneakyThrows;
-import org.folio.spring.config.properties.FolioEnvironment;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.tenant.domain.dto.TenantAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -54,11 +54,10 @@ public class BaseIT {
   }
 
   @BeforeAll
-  static void beforeAll(@Autowired MockMvc mockMvc, @Autowired FolioEnvironment folioEnvironment) {
+  static void beforeAll(@Autowired MockMvc mockMvc) {
     wireMockServer = new WireMockServer(WIRE_MOCK_PORT);
     wireMockServer.start();
     setUpTenant(mockMvc);
-    folioEnvironment.setOkapiUrl(getOkapiUrl());
   }
 
   public static String getOkapiUrl() {
@@ -75,7 +74,7 @@ public class BaseIT {
     mockMvc.perform(post("/_/tenant")
       .content(asJsonString(new TenantAttributes().moduleTo("mod-reading-room")))
       .headers(defaultHeaders())
-      .contentType(APPLICATION_JSON));
+      .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
   }
 
   public static HttpHeaders defaultHeaders() {

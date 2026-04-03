@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.folio.common.domain.model.ResultList;
 import org.folio.readingroom.client.ServicePointClient;
 import org.folio.readingroom.service.impl.ServicePointServiceImpl;
-import org.folio.spring.model.ResultList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,7 @@ class ServicePointServiceTest {
       new ServicePointClient.InventoryServicePoint(servicePointIds.get(1).toString(), "Online")
     );
     resultList = new ResultList<>();
-    resultList.setResult(inventoryServicePoints);
+    resultList.setRecords(inventoryServicePoints);
     when(servicePointClient.getServicePointsByIds(any())).thenReturn(resultList);
     List<UUID> invalidServicePointsList = servicePointServiceImpl.fetchInvalidServicePointList(servicePointIds);
     verify(servicePointClient).getServicePointsByIds(any());
@@ -54,7 +54,7 @@ class ServicePointServiceTest {
       new ServicePointClient.InventoryServicePoint(servicePointIds.get(0).toString(), "Circ-desk1")
     );
     resultList = new ResultList<>();
-    resultList.setResult(inventoryServicePoints);
+    resultList.setRecords(inventoryServicePoints);
     when(servicePointClient.getServicePointsByIds(any())).thenReturn(resultList);
     List<UUID> invalidServicePointsList = servicePointServiceImpl.fetchInvalidServicePointList(servicePointIds);
     verify(servicePointClient).getServicePointsByIds(any());

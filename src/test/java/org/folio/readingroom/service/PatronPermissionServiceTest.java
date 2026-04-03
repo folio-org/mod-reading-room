@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.HttpClientErrorException;
 
 @ExtendWith(MockitoExtension.class)
  class PatronPermissionServiceTest {
@@ -116,8 +116,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
   @Test
   void getPatronPermission_Failure() {
-    doThrow(FeignException.class).when(userService).validatePatronExistence(any(UUID.class));
-    assertThrows(FeignException.class, () -> patronPermissionsService
+    doThrow(HttpClientErrorException.class).when(userService).validatePatronExistence(any(UUID.class));
+    assertThrows(HttpClientErrorException.class, () -> patronPermissionsService
       .getPatronPermissionsByUserId(uuid, uuid));
   }
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.folio.readingroom.client.feign.ServicePointClient;
+import org.folio.readingroom.client.ServicePointClient;
 import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.utils.CqlHelper;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,8 @@ public class ServicePointServiceImpl implements ServicePointService {
   public List<UUID> fetchInvalidServicePointList(List<UUID> servicePointIds) {
     log.debug("fetchInvalidServicePointList:: fetching invalid servicePointIds {}", servicePointIds);
     List<UUID> inventoryServicePointIds = servicePointClient
-      .getServicePointsByIds(CqlHelper.getAnyMatch(servicePointIds))
-      .getResult()
+      .getServicePointsByIds(CqlHelper.getAnyMatch("id", servicePointIds))
+      .getRecords()
       .stream()
       .map(inventoryServicePoint -> UUID.fromString(inventoryServicePoint.id()))
       .toList();

@@ -29,7 +29,6 @@ import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
-import org.folio.spring.service.SystemUserScopedExecutionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,8 +40,6 @@ class PatronPermissionControllerTest extends BaseIT {
   private PatronPermissionRepository patronPermissionRepository;
   @Autowired
   private AccessLogRepository accessLogRepository;
-  @Autowired
-  private SystemUserScopedExecutionService systemUserScopedExecutionService;
 
   @Test
   void testSuccessUpdatePatronPermission() throws Exception {
@@ -409,7 +406,7 @@ class PatronPermissionControllerTest extends BaseIT {
   }
 
   private void removeReadingRoomIfExists() {
-    systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT, () -> {
+    runInTenantContext(() -> {
       patronPermissionRepository.deleteAll();
       accessLogRepository.deleteAll();
       readingRoomRepository.deleteAll();

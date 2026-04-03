@@ -16,9 +16,6 @@ folio:
     validation:
       enabled: false
   environment: ${ENV:folio}
-  system-user:
-    enabled: false
-    password: system-user
 management:
   endpoints:
     enabled-by-default: false

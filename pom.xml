@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.3</version>
+    <version>4.0.5</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.folio</groupId>
@@ -27,10 +27,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- runtime dependencies -->
-    <folio-spring-support.version>9.0.0</folio-spring-support.version>
+    <folio-spring-support.version>10.0.0-RC1</folio-spring-support.version>
+    <folio-backend-common.version>2.0.0</folio-backend-common.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <mvn-failsafe.version>3.5.5</mvn-failsafe.version>
-    <hibernate.version>6.5.3.Final</hibernate.version>
 
     <!-- test dependencies -->
     <wiremock.version>3.13.2</wiremock.version>
@@ -52,8 +52,8 @@
     </dependency>
     <dependency>
       <groupId>org.folio</groupId>
-      <artifactId>folio-spring-system-user</artifactId>
-      <version>${folio-spring-support.version}</version>
+      <artifactId>folio-backend-common</artifactId>
+      <version>${folio-backend-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.folio</groupId>
@@ -79,24 +79,6 @@
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-jaxb-annotations</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jdk8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
     </dependency>
 
     <dependency>
@@ -137,6 +119,11 @@
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>

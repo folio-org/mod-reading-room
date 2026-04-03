@@ -8,10 +8,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.SneakyThrows;
+import org.folio.spring.FolioModuleMetadata;
 import org.folio.spring.integration.XOkapiHeaders;
+import org.folio.spring.scope.FolioExecutionContextSetter;
 import org.folio.tenant.domain.dto.TenantAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
@@ -48,6 +52,8 @@ public class BaseIT {
       .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
   @Autowired
   protected MockMvc mockMvc;
+  @Autowired
+  protected FolioModuleMetadata folioModuleMetadata;
 
   static {
     postgreDBContainer.start();
@@ -75,6 +81,13 @@ public class BaseIT {
       .content(asJsonString(new TenantAttributes().moduleTo("mod-reading-room")))
       .headers(defaultHeaders())
       .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
+  }
+
+  protected void runInTenantContext(Runnable action) {
+    var headers = Map.<String, Collection<String>>of(XOkapiHeaders.TENANT, List.of(TENANT));
+    try (var ignored = new FolioExecutionContextSetter(folioModuleMetadata, headers)) {
+      action.run();
+    }
   }
 
   public static HttpHeaders defaultHeaders() {

@@ -27,18 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
-import org.folio.spring.FolioModuleMetadata;
-import org.folio.spring.integration.XOkapiHeaders;
-import org.folio.spring.scope.FolioExecutionContextSetter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -51,8 +45,6 @@ class ReadingRoomControllerTest extends BaseIT {
   private PatronPermissionRepository patronPermissionRepository;
   @Autowired
   private AccessLogRepository accessLogRepository;
-  @Autowired
-  private FolioModuleMetadata folioModuleMetadata;
 
   @Test
   void testCreateReadingRoom() throws Exception {
@@ -809,12 +801,11 @@ class ReadingRoomControllerTest extends BaseIT {
   }
 
   private void removeReadingRoomIfExists() {
-    var headers = Map.<String, Collection<String>>of(XOkapiHeaders.TENANT, List.of(TENANT));
-    try (var ignored = new FolioExecutionContextSetter(folioModuleMetadata, headers)) {
+    runInTenantContext(() -> {
       patronPermissionRepository.deleteAll();
       accessLogRepository.deleteAll();
       readingRoomRepository.deleteAll();
-    }
+    });
   }
 
 }

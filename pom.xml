@@ -28,7 +28,7 @@
 
     <!-- runtime dependencies -->
     <folio-spring-support.version>10.0.0-RC1</folio-spring-support.version>
-    <folio-backend-common.version>2.0.0</folio-backend-common.version>
+    <folio-backend-common.version>3.0.9</folio-backend-common.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <mvn-failsafe.version>3.5.5</mvn-failsafe.version>
 
@@ -190,7 +190,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.15.0</version>
+            <version>13.4.0</version>
           </dependency>
         </dependencies>
         <executions>

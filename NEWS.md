@@ -1,6 +1,23 @@
-## 1.3.0 In Progress
-* [MODRR-40](https://folio-org.atlassian.net/browse/MODRR-40) - Use GitHub Workflows for Maven
-* [MODRR-38](https://folio-org.atlassian.net/browse/MODRR-38) - Upgrade module to Spring Boot 4
+## 2.0.0 2026-04-17
+
+### Breaking changes
+* Upgrade to Spring Boot 4 ([MODRR-38](https://folio-org.atlassian.net/browse/MODRR-38))
+
+### Features
+* Use GitHub Workflows for Maven ([MODRR-40](https://folio-org.atlassian.net/browse/MODRR-40))
+
+### Bug fixes
+* Fix querying by enum values ([MODRR-32](https://folio-org.atlassian.net/browse/MODRR-32))
+
+### Tech Debt
+* Sensitive data in logs cleanup ([MODRR-30](https://folio-org.atlassian.net/browse/MODRR-30))
+
+### Dependencies
+* Bump `spring-boot` from `3.4.3` to `4.0.5`
+* Bump `folio-spring-support` from `9.0.0` to `10.0.0`
+* Bump `folio-backend-common` from `2.0.0` to `3.0.9` (replaces `folio-spring-system-user`)
+* Bump `openapi-generator` from `7.9.0` to `7.21.0`
+* Bump `checkstyle` from `10.15.0` to `13.4.0`
 
 ## 1.2.0 2025-08-17
 * re-released with new version for app-reading-room release

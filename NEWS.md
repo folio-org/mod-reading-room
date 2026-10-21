@@ -1,3 +1,8 @@
+## 2.0.1 2026-10-21
+
+### Dependencies
+* Bump `spring-boot` from `4.0.5` to `4.1.1` and `folio-spring-support` from `10.0.0` to `10.0.1` ([MODRR-47](https://folio-org.atlassian.net/browse/MODRR-47))
+
 ## 2.0.0 2026-04-17
 
 ### Breaking changes

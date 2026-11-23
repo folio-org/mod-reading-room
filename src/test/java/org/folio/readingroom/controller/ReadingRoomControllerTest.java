@@ -17,8 +17,13 @@ import static org.folio.readingroom.utils.HelperUtils.createReadingRoom;
 import static org.folio.readingroom.utils.HelperUtils.createServicePoint;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,17 +32,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jayway.jsonpath.JsonPath;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
+import javax.sql.DataSource;
+import org.folio.readingroom.domain.dto.AccessLog;
+import org.folio.readingroom.domain.dto.Metadata;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.repository.AccessLogRepository;
 import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
+import org.folio.spring.integration.XOkapiHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.web.servlet.ResultActions;
 
 class ReadingRoomControllerTest extends BaseIT {
+
+  private static final String UTC_MILLIS_PATTERN = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z";
 
   @Autowired
   private ReadingRoomRepository readingRoomRepository;
@@ -45,6 +64,8 @@ class ReadingRoomControllerTest extends BaseIT {
   private PatronPermissionRepository patronPermissionRepository;
   @Autowired
   private AccessLogRepository accessLogRepository;
+  @Autowired
+  private DataSource dataSource;
 
   @Test
   void testCreateReadingRoom() throws Exception {
@@ -798,6 +819,165 @@ class ReadingRoomControllerTest extends BaseIT {
       .andExpect(jsonPath("totalRecords").value(0))
       .andExpect(jsonPath("accessLogs").isArray())
       .andExpect(jsonPath("accessLogs", hasSize(0)));
+  }
+
+  @Test
+  void testCreateAccessLogReturnsMetadata() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+
+    var body = postAccessLog(createAccessLog(UUID.randomUUID(), ALLOWED), defaultHeaders())
+      .andExpect(status().isCreated())
+      .andExpect(jsonPath("$.metadata.createdDate", matchesPattern(UTC_MILLIS_PATTERN)))
+      .andExpect(jsonPath("$.metadata.createdByUserId").value(okapiUserId()))
+      .andReturn().getResponse().getContentAsString();
+
+    String createdDate = JsonPath.read(body, "$.metadata.createdDate");
+    assertEquals(createdDate, JsonPath.read(body, "$.metadata.updatedDate"));
+    assertEquals(okapiUserId(), JsonPath.read(body, "$.metadata.updatedByUserId"));
+    var age = Duration.between(Instant.parse(createdDate), Instant.now()).abs();
+    assertTrue(age.compareTo(Duration.ofMinutes(1)) < 0);
+  }
+
+  @Test
+  void testCreateAccessLogIgnoresClientSuppliedMetadata() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+    var bogusUser = UUID.randomUUID();
+    var accessLog = createAccessLog(UUID.randomUUID(), ALLOWED)
+      .metadata(new Metadata().createdDate("2000-01-01T00:00:00.000Z").createdByUserId(bogusUser)
+        .updatedDate("2000-01-02T00:00:00.000Z").updatedByUserId(bogusUser));
+
+    postAccessLog(accessLog, defaultHeaders())
+      .andExpect(status().isCreated())
+      .andExpect(jsonPath("$.metadata.createdDate", not("2000-01-01T00:00:00.000Z")))
+      .andExpect(jsonPath("$.metadata.updatedDate", not("2000-01-02T00:00:00.000Z")))
+      .andExpect(jsonPath("$.metadata.createdByUserId").value(okapiUserId()))
+      .andExpect(jsonPath("$.metadata.updatedByUserId").value(okapiUserId()));
+
+    this.mockMvc.perform(
+        get("/reading-room/access-log")
+          .param("query", "readingRoomId=" + READING_ROOM_ID)
+          .headers(defaultHeaders())
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.accessLogs[0].metadata.createdByUserId").value(okapiUserId()))
+      .andExpect(jsonPath("$.accessLogs[0].metadata.createdDate", not("2000-01-01T00:00:00.000Z")))
+      .andExpect(jsonPath("$.accessLogs[0].metadata.updatedDate", not("2000-01-02T00:00:00.000Z")));
+  }
+
+  @Test
+  void testCreateAccessLogAcceptsEmptyAndPartialClientMetadata() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+    var withEmptyMetadata = createAccessLog(UUID.randomUUID(), ALLOWED).metadata(new Metadata());
+    var withPartialMetadata = createAccessLog(UUID.randomUUID(), DENIED)
+      .metadata(new Metadata().createdByUserId(UUID.randomUUID()));
+
+    for (var accessLog : List.of(withEmptyMetadata, withPartialMetadata)) {
+      postAccessLog(accessLog, defaultHeaders())
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.metadata.createdDate", matchesPattern(UTC_MILLIS_PATTERN)))
+        .andExpect(jsonPath("$.metadata.createdByUserId").value(okapiUserId()));
+    }
+  }
+
+  @Test
+  void testCreateAccessLogWithoutOkapiUserIdOmitsUserIds() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+    var headers = defaultHeaders();
+    headers.remove(XOkapiHeaders.USER_ID);
+
+    postAccessLog(createAccessLog(UUID.randomUUID(), ALLOWED), headers)
+      .andExpect(status().isCreated())
+      .andExpect(jsonPath("$.metadata.createdDate", matchesPattern(UTC_MILLIS_PATTERN)))
+      .andExpect(jsonPath("$.metadata.updatedDate", matchesPattern(UTC_MILLIS_PATTERN)))
+      .andExpect(jsonPath("$.metadata.createdByUserId").doesNotExist())
+      .andExpect(jsonPath("$.metadata.updatedByUserId").doesNotExist());
+  }
+
+  @Test
+  void testGetAccessLogsReturnMetadataForEveryEntry() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+    postAccessLog(createAccessLog(UUID.randomUUID(), ALLOWED), defaultHeaders()).andExpect(status().isCreated());
+    postAccessLog(createAccessLog(UUID.randomUUID(), DENIED), defaultHeaders()).andExpect(status().isCreated());
+
+    var body = this.mockMvc.perform(
+        get("/reading-room/access-log")
+          .headers(defaultHeaders())
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.totalRecords").value(2))
+      .andExpect(jsonPath("$.accessLogs[*].metadata.createdDate", hasSize(2)))
+      .andExpect(jsonPath("$.accessLogs[*].metadata.createdDate", everyItem(matchesPattern(UTC_MILLIS_PATTERN))))
+      .andReturn().getResponse().getContentAsString();
+
+    List<String> created = JsonPath.read(body, "$.accessLogs[*].metadata.createdDate");
+    List<String> updated = JsonPath.read(body, "$.accessLogs[*].metadata.updatedDate");
+    assertEquals(created, updated);
+  }
+
+  @Test
+  void testGetAccessLogLegacyEntryWithoutNameServicePointAndUpdatedFields() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+    var legacyId = UUID.randomUUID();
+    insertLegacyAccessLog(legacyId);
+    var originalZone = TimeZone.getDefault();
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    try {
+      this.mockMvc.perform(
+          get("/reading-room/access-log")
+            .param("query", "readingRoomId=" + READING_ROOM_ID)
+            .headers(defaultHeaders())
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.totalRecords").value(1))
+        .andExpect(jsonPath("$.accessLogs[0].id").value(legacyId.toString()))
+        .andExpect(jsonPath("$.accessLogs[0].readingRoomName").doesNotExist())
+        .andExpect(jsonPath("$.accessLogs[0].servicePointId").doesNotExist())
+        .andExpect(jsonPath("$.accessLogs[0].metadata.createdDate").value("2025-01-15T10:20:30.123Z"))
+        .andExpect(jsonPath("$.accessLogs[0].metadata.updatedDate").value("2025-01-15T10:20:30.123Z"))
+        .andExpect(jsonPath("$.accessLogs[0].metadata.createdByUserId").doesNotExist())
+        .andExpect(jsonPath("$.accessLogs[0].metadata.updatedByUserId").doesNotExist());
+    } finally {
+      TimeZone.setDefault(originalZone);
+    }
+  }
+
+  private void createReadingRoomWithServicePoint(UUID readingRoomId, UUID servicePointId) throws Exception {
+    var readingRoom = createReadingRoom(readingRoomId, false);
+    readingRoom.servicePoints(Set.of(createServicePoint(servicePointId, SERVICE_POINT_NAME1)));
+    this.mockMvc.perform(
+        post("/reading-room")
+          .content(asJsonString(readingRoom))
+          .headers(defaultHeaders())
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON))
+      .andExpect(status().isCreated());
+  }
+
+  private ResultActions postAccessLog(AccessLog accessLog, HttpHeaders headers) throws Exception {
+    return this.mockMvc.perform(
+      post("/reading-room/" + accessLog.getReadingRoomId() + "/access-log")
+        .content(asJsonString(accessLog))
+        .headers(headers)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON));
+  }
+
+  private static String okapiUserId() {
+    return defaultHeaders().getFirst(XOkapiHeaders.USER_ID);
+  }
+
+  private void insertLegacyAccessLog(UUID id) {
+    var schema = folioModuleMetadata.getDBSchemaName(TENANT);
+    new JdbcTemplate(dataSource).update("INSERT INTO " + schema + ".access_log "
+        + "(id, user_id, patron_id, reading_room_id, action, created_date) "
+        + "VALUES (?, ?, ?, ?, 'ALLOWED', TIMESTAMP '2025-01-15 10:20:30.123456')",
+      id, UUID.randomUUID(), UUID.randomUUID(), READING_ROOM_ID);
   }
 
   private void removeReadingRoomIfExists() {

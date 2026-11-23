@@ -31,6 +31,9 @@ AccessLog:
       enum:
         - ALLOWED
         - DENIED
+    metadata:
+      type: object
+      $ref: "common.yaml#/Metadata"
 
 AccessLogCollection:
   type: "object"

@@ -17,7 +17,7 @@ _How does this change fulfill the purpose? Provide a high-level overview of the 
 - [ ] **NEWS**: Confirm that the NEWS file is updated with relevant information about the changes made in this pull request.
 
 ### Related Issues
-[MODRR-XXX](https://folio-org.atlassian.net/browse/MODDCB-XXX)
+[MODRR-XXX](https://folio-org.atlassian.net/browse/MODRR-XXX)
 _List any Jira issues related to this pull request._
 
 ### Learning and Resources (if applicable)

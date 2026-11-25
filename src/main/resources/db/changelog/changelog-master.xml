@@ -9,4 +9,5 @@
   <include file="changes/create_patron_permission.xml" relativeToChangelogFile="true"/>
   <include file="changes/create_access_log.xml" relativeToChangelogFile="true"/>
   <include file="changes/alter_access_log.xml" relativeToChangelogFile="true"/>
+  <include file="changes/create_access_log_created_date_index.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

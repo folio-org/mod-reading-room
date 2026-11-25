@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+  <!-- Serves date range searches and the default sort (created date, then id) of GET /reading-room/access-log -->
+  <changeSet id="createAccessLogCreatedDateIndex" author="VadymZakletskyi">
+    <createIndex tableName="access_log" indexName="idx_access_log_created_date_id">
+      <column name="created_date"/>
+      <column name="id"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>

@@ -1,5 +1,6 @@
 package org.folio.readingroom.utils;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +11,8 @@ import org.folio.readingroom.domain.dto.ServicePoint;
 import org.folio.readingroom.domain.entity.AccessLogEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
+import org.z3950.zing.cql.CQLParseException;
+import org.z3950.zing.cql.CQLParser;
 
 public class HelperUtils {
 
@@ -108,5 +111,17 @@ public class HelperUtils {
     accessLogEntity.setReadingRoomName(READING_ROOM_NAME);
     accessLogEntity.setServicePointId(SERVICE_POINT_ID1);
     return accessLogEntity;
+  }
+
+  /**
+   * Parses the query and prints it back, so that two queries with the same meaning compare equal
+   * whatever their spacing and parentheses.
+   */
+  public static String canonicalCql(String cql) {
+    try {
+      return new CQLParser().parse(cql).toCQL();
+    } catch (CQLParseException | IOException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 }

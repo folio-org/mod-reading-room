@@ -2,6 +2,7 @@ package org.folio.readingroom.service;
 
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID;
 import static org.folio.readingroom.utils.HelperUtils.READING_ROOM_ID_FOR_PATRON_TEST;
+import static org.folio.readingroom.utils.HelperUtils.canonicalCql;
 import static org.folio.readingroom.utils.HelperUtils.createAccessLog;
 import static org.folio.readingroom.utils.HelperUtils.createAccessLogEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +37,7 @@ import org.folio.spring.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +47,8 @@ import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class ReadingRoomServiceTest {
+
+  private static final String NEWEST_FIRST = " sortby createdDate/sort.descending id/sort.descending";
 
   @Mock
   ReadingRoomRepository readingRoomRepository;
@@ -239,29 +242,34 @@ class ReadingRoomServiceTest {
     var accessLogEntities = List.of(accessLogEntity1);
     Page<AccessLogEntity> accessLogEntityPage = new PageImpl<>(accessLogEntities, PageRequest.of(offset, limit),
       accessLogEntities.size());
-    when(accessLogRepository.findByCql(eq("cql.allRecords=1"), any()))
+    when(accessLogRepository.findByCql(any(), any()))
       .thenReturn(accessLogEntityPage);
     when(readingRoomMapper.toDtoCollection(accessLogEntityPage))
       .thenReturn(new AccessLogCollection(List.of(accessLog1), 1));
     var response = readingRoomService.getAccessLogsByCqlQuery("cql.allRecords=1", 0, 10);
-    verify(accessLogRepository).findByCql(any(), any());
-    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
     assertEquals(1, response.getTotalRecords());
     assertEquals(accessLog1, response.getAccessLogs().get(0));
+    var cqlQuery = ArgumentCaptor.forClass(String.class);
+    verify(accessLogRepository).findByCql(cqlQuery.capture(), any());
+    assertEquals(canonicalCql("cql.allRecords=1" + NEWEST_FIRST), canonicalCql(cqlQuery.getValue()));
+    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
   }
 
   @Test
   void getAccessLogWithInvalidValueInCqlQuery() {
     var randomReadingRoomId = UUID.randomUUID();
     Page<AccessLogEntity> accessLogEntityPage = new PageImpl<>(List.of(), PageRequest.of(offset, limit), 1);
-    when(accessLogRepository.findByCql(eq("readingRoomId=" + randomReadingRoomId), any()))
+    when(accessLogRepository.findByCql(any(), any()))
       .thenReturn(accessLogEntityPage);
     when(readingRoomMapper.toDtoCollection(accessLogEntityPage))
       .thenReturn(new AccessLogCollection(List.of(), 0));
     var response = readingRoomService.getAccessLogsByCqlQuery("readingRoomId=" + randomReadingRoomId, 0, 10);
-    verify(accessLogRepository).findByCql(any(), any());
-    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
     assertEquals(0, response.getTotalRecords());
     assertEquals(0, response.getAccessLogs().size());
+    var cqlQuery = ArgumentCaptor.forClass(String.class);
+    verify(accessLogRepository).findByCql(cqlQuery.capture(), any());
+    assertEquals(canonicalCql("readingRoomId=" + randomReadingRoomId + NEWEST_FIRST),
+      canonicalCql(cqlQuery.getValue()));
+    verify(readingRoomMapper).toDtoCollection(accessLogEntityPage);
   }
 }

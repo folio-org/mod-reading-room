@@ -27,6 +27,7 @@ import org.folio.readingroom.repository.ReadingRoomServicePointRepository;
 import org.folio.readingroom.service.ReadingRoomService;
 import org.folio.readingroom.service.ServicePointService;
 import org.folio.readingroom.service.converter.Mapper;
+import org.folio.readingroom.utils.AccessLogCqlNormalizer;
 import org.folio.spring.data.OffsetRequest;
 import org.folio.spring.exception.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -103,7 +104,8 @@ public class ReadingRoomServiceImpl implements ReadingRoomService {
   @Override
   public AccessLogCollection getAccessLogsByCqlQuery(String query, Integer offset, Integer limit) {
     log.debug("getAccessLogsByCqlQuery:: fetch access log entries with offset {}, limit {}", offset, limit);
-    var accessLogs = accessLogRepository.findByCql(query, OffsetRequest.of(offset, limit));
+    var accessLogs = accessLogRepository.findByCql(AccessLogCqlNormalizer.normalize(query),
+      OffsetRequest.of(offset, limit));
     return mapper.toDtoCollection(accessLogs);
   }
 

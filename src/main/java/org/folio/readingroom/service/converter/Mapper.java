@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.folio.readingroom.domain.dto.AccessLog;
 import org.folio.readingroom.domain.dto.AccessLogCollection;
+import org.folio.readingroom.domain.dto.Metadata;
 import org.folio.readingroom.domain.dto.PatronPermission;
 import org.folio.readingroom.domain.dto.ReadingRoom;
 import org.folio.readingroom.domain.dto.ReadingRoomCollection;
@@ -14,11 +15,13 @@ import org.folio.readingroom.domain.entity.PatronPermissionEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomEntity;
 import org.folio.readingroom.domain.entity.ReadingRoomServicePointEntity;
 import org.folio.readingroom.domain.projection.PatronPermissionProjection;
+import org.folio.readingroom.utils.DateTimeHelper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
 
@@ -45,6 +48,10 @@ public interface Mapper {
   @Mapping(target = "name", source = "label")
   ReadingRoomServicePointEntity toEntity(ServicePoint servicePoint);
 
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "createdDate", ignore = true)
+  @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "updatedDate", ignore = true)
   AccessLogEntity toEntity(AccessLog accessLog);
 
   List<ReadingRoom> toDtoList(List<ReadingRoomEntity> readingRoomEntity);
@@ -55,6 +62,7 @@ public interface Mapper {
   @Mapping(target = "label", source = "name")
   ServicePoint toDto(ReadingRoomServicePointEntity servicePointEntity);
 
+  @Mapping(target = "metadata", source = "entity", qualifiedByName = "accessLogMetadata")
   AccessLog toDto(AccessLogEntity entity);
 
   @Mapping(target = "metadata.createdByUserId", source = "createdBy")
@@ -83,6 +91,20 @@ public interface Mapper {
   default AccessLogCollection toDtoCollection(Page<AccessLogEntity> accessLogEntitiesPage) {
     var accessLogEntities = toDtoAccessLogList(accessLogEntitiesPage.getContent());
     return new AccessLogCollection(accessLogEntities, (int) accessLogEntitiesPage.getTotalElements());
+  }
+
+  @Named("accessLogMetadata")
+  default Metadata toAccessLogMetadata(AccessLogEntity entity) {
+    if (entity == null) {
+      return null;
+    }
+    var updatedDate = entity.getUpdatedDate() != null ? entity.getUpdatedDate() : entity.getCreatedDate();
+    var updatedBy = entity.getUpdatedBy() != null ? entity.getUpdatedBy() : entity.getCreatedBy();
+    return new Metadata()
+      .createdDate(DateTimeHelper.toUtcIsoString(entity.getCreatedDate()))
+      .createdByUserId(entity.getCreatedBy())
+      .updatedDate(DateTimeHelper.toUtcIsoString(updatedDate))
+      .updatedByUserId(updatedBy);
   }
 
   default String setUpdatedDate(PatronPermissionProjection patronPermissionProjection) {

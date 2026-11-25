@@ -3,6 +3,7 @@
 ### Breaking changes
 
 ### Features
+* Add metadata to access log POST and GET responses ([MODRR-49](https://folio-org.atlassian.net/browse/MODRR-49))
 
 ### Bug fixes
 * Set "permissions: contents: read" in maven.yml ([FOLIO-4553](https://folio-org.atlassian.net/browse/FOLIO-4553))

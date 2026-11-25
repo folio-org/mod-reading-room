@@ -122,6 +122,8 @@ class AccessLogCqlNormalizerTest {
         "createdDate>=2026-01-15T10:20:30.123 and createdDate<2026-01-15T10:20:30.124"),
       arguments("createdDate==2026-01-15T10:20:30.123456",
         "createdDate>=2026-01-15T10:20:30.123456 and createdDate<2026-01-15T10:20:30.123457"),
+      arguments("createdDate<=2026-01-15T10:20:30.5", "createdDate<2026-01-15T10:20:30.6"),
+      arguments("createdDate<=2026-01-15T10:20:30.123456789", "createdDate<2026-01-15T10:20:30.12345679"),
       arguments("createdDate<=2026-01-15T10:20:30", "createdDate<2026-01-15T10:20:31"),
       arguments("createdDate<=2026-01-15T10:20", "createdDate<2026-01-15T10:21:00"),
       arguments("createdDate>2026-01-15T10:20:30.123Z", "createdDate>=2026-01-15T10:20:30.124"),

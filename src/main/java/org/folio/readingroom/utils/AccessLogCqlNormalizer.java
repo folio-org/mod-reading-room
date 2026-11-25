@@ -47,8 +47,8 @@ public class AccessLogCqlNormalizer {
   private static final String SORT_DESCENDING = "sort.descending";
   private static final Pattern DATE = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
   private static final Pattern DATE_RANGE = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}):(\\d{4}-\\d{2}-\\d{2})");
-  private static final Pattern DATE_TIME = Pattern.compile("(?<local>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}"
-    + "(?<seconds>:\\d{2}(?<fraction>\\.\\d{1,9})?)?)(?<offset>Z|[+-]\\d{2}:\\d{2})?");
+  private static final Pattern DATE_TIME = Pattern.compile("(?<local>\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d"
+    + "(?<seconds>:\\d\\d(?<fraction>\\.\\d{1,9})?)?)(?<offset>Z|[+-]\\d\\d:\\d\\d)?");
 
   /**
    * Same as {@link #normalize(String, ZoneId)} for dates stored in the JVM's default zone, which is the zone
@@ -143,7 +143,7 @@ public class AccessLogCqlNormalizer {
     var fraction = dateTime.group("fraction");
     if (fraction != null) {
       var digits = fraction.length() - 1;
-      return Duration.ofNanos((long) Math.pow(10, 9 - digits));
+      return Duration.ofSeconds(1).dividedBy((long) Math.pow(10, digits));
     }
     return dateTime.group("seconds") != null ? Duration.ofSeconds(1) : Duration.ofMinutes(1);
   }

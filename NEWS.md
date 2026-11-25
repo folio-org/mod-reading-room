@@ -4,6 +4,7 @@
 
 ### Features
 * Add metadata to access log POST and GET responses ([MODRR-49](https://folio-org.atlassian.net/browse/MODRR-49))
+* Add date range search and sort by created and updated date to GET access log ([MODRR-50](https://folio-org.atlassian.net/browse/MODRR-50))
 
 ### Bug fixes
 * Set "permissions: contents: read" in maven.yml ([FOLIO-4553](https://folio-org.atlassian.net/browse/FOLIO-4553))

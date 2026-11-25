@@ -35,6 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.jayway.jsonpath.JsonPath;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -48,6 +52,7 @@ import org.folio.readingroom.repository.PatronPermissionRepository;
 import org.folio.readingroom.repository.ReadingRoomRepository;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -942,6 +947,169 @@ class ReadingRoomControllerTest extends BaseIT {
         .andExpect(jsonPath("$.accessLogs[0].metadata.updatedDate").value("2025-01-15T10:20:30.123Z"))
         .andExpect(jsonPath("$.accessLogs[0].metadata.createdByUserId").doesNotExist())
         .andExpect(jsonPath("$.accessLogs[0].metadata.updatedByUserId").doesNotExist());
+    } finally {
+      TimeZone.setDefault(originalZone);
+    }
+  }
+
+  @Test
+  void testGetAccessLogsByCreatedOrUpdatedDateRange_returnsEntriesOfThoseUtcDays() throws Exception {
+    insertEntriesAroundJanuary2026();
+
+    assertEquals(ids(3, 2), getAccessLogIds("createdDate>=2026-01-01 and createdDate<2026-02-01"));
+    assertEquals(ids(3, 2), getAccessLogIds("updatedDate>=2026-01-01 and updatedDate<2026-02-01"));
+    assertEquals(ids(3, 2), getAccessLogIds("createdDate<=2026-01-31 and updatedDate>2025-12-31"));
+    // the date range the FOLIO UI builds
+    assertEquals(ids(3, 2),
+      getAccessLogIds("createdDate>=\"2026-01-01T00:00:00.000\" and createdDate<=\"2026-01-31T23:59:59.999\""));
+  }
+
+  @Test
+  void testGetAccessLogsByDateAndExistingFilter_returnsEntriesMatchingBoth() throws Exception {
+    insertEntriesAroundJanuary2026();
+
+    assertEquals(ids(2), getAccessLogIds("patronId==" + uuid(101) + " and createdDate=2026-01-01"));
+    assertEquals(ids(1), getAccessLogIds("userId==" + uuid(201) + " and createdDate<2026-01-01"));
+    assertEquals(ids(3), getAccessLogIds("action==DENIED and updatedDate>=2026-01-01"));
+    assertEquals(ids(4, 3, 2), getAccessLogIds("readingRoomId==" + READING_ROOM_ID
+      + " and servicePointId==" + SERVICE_POINT_ID1 + " and createdDate>=2026-01-01"));
+  }
+
+  @Test
+  void testGetAccessLogsSortedByDate_returnsEntriesInRequestedOrder() throws Exception {
+    insertEntriesAroundJanuary2026();
+
+    assertEquals(ids(4, 3, 2, 1), getAccessLogIds(null));
+    assertEquals(ids(1, 2, 3, 4), getAccessLogIds("cql.allRecords=1 sortby createdDate/sort.ascending"));
+    assertEquals(ids(4, 3, 2, 1), getAccessLogIds("cql.allRecords=1 sortby updatedDate/sort.descending"));
+    assertEquals(ids(2, 3, 4), getAccessLogIds("createdDate>=2026-01-01 sortby updatedDate/sort.ascending"));
+  }
+
+  @Test
+  void testGetAccessLogsByUtcOffsetValues_returnsEntriesOfThatInstantRange() throws Exception {
+    insertEntriesAroundJanuary2026();
+
+    assertEquals(ids(2),
+      getAccessLogIds("createdDate>=2026-01-01T00:00:00Z and createdDate<2026-01-31T12:00:00+02:00"));
+    assertEquals(ids(4, 3), getAccessLogIds("createdDate>2025-12-31T19:00:00-05:00"));
+  }
+
+  @Test
+  void testGetAccessLogsPagedThroughSortedResults_returnsEveryEntryOnce() throws Exception {
+    prepareReadingRoom();
+    // 11 and 12 share their creation time, and 11 is stored first
+    insertAccessLog(uuid(11), uuid(201), uuid(101), "ALLOWED", "2026-03-01T10:00:00Z");
+    insertAccessLog(uuid(12), uuid(201), uuid(101), "ALLOWED", "2026-03-01T10:00:00Z");
+    insertAccessLog(uuid(13), uuid(201), uuid(101), "DENIED", "2026-03-01T09:00:00Z");
+    insertAccessLog(uuid(14), uuid(201), uuid(101), "ALLOWED", "2026-03-01T11:00:00Z");
+    insertAccessLog(uuid(15), uuid(201), uuid(101), "DENIED", "2026-03-01T08:00:00Z");
+
+    assertEquals(ids(14, 12, 11, 13, 15), getAllAccessLogIdsByPages(null));
+    assertEquals(ids(15, 13, 11, 12, 14),
+      getAllAccessLogIdsByPages("createdDate=2026-03-01 sortby createdDate/sort.ascending"));
+  }
+
+  @Test
+  void testGetAccessLogsByDateOnly_inServerZoneBehindUtc_usesUtcDays() throws Throwable {
+    prepareReadingRoom();
+    inServerZone("America/New_York", () -> {
+      // 22:00 on 31 December in New York
+      insertAccessLog(uuid(21), uuid(201), uuid(101), "ALLOWED", "2026-01-01T03:00:00Z");
+      // 00:30 on 1 January in New York
+      insertAccessLog(uuid(22), uuid(201), uuid(101), "ALLOWED", "2026-01-01T05:30:00Z");
+
+      assertEquals(ids(22, 21), getAccessLogIds("createdDate=2026-01-01"));
+      assertEquals(List.of(), getAccessLogIds("createdDate=2025-12-31"));
+      this.mockMvc.perform(
+          get("/reading-room/access-log")
+            .param("query", "id==" + uuid(21))
+            .headers(defaultHeaders())
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accessLogs[0].metadata.createdDate").value("2026-01-01T03:00:00.000Z"));
+    });
+  }
+
+  @Test
+  void testGetAccessLogsWithInvalidDateOrQuery_returnsBadRequest() throws Exception {
+    prepareReadingRoom();
+
+    for (var query : List.of("createdDate>=2026-13-01", "updatedDate<yesterday", "createdDate>=")) {
+      this.mockMvc.perform(
+          get("/reading-room/access-log")
+            .param("query", query)
+            .headers(defaultHeaders())
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+    }
+  }
+
+  private void insertEntriesAroundJanuary2026() throws Exception {
+    prepareReadingRoom();
+    insertAccessLog(uuid(1), uuid(201), uuid(101), "ALLOWED", "2025-12-31T23:59:59.999999Z");
+    insertAccessLog(uuid(2), uuid(201), uuid(101), "ALLOWED", "2026-01-01T00:00:00Z");
+    insertAccessLog(uuid(3), uuid(202), uuid(102), "DENIED", "2026-01-31T23:59:59.999999Z");
+    insertAccessLog(uuid(4), uuid(202), uuid(102), "ALLOWED", "2026-02-01T00:00:00Z");
+  }
+
+  private void prepareReadingRoom() throws Exception {
+    removeReadingRoomIfExists();
+    createReadingRoomWithServicePoint(READING_ROOM_ID, SERVICE_POINT_ID1);
+  }
+
+  /**
+   * Stores an entry created at the given UTC instant the way Spring Data auditing does: as the JVM's local time.
+   */
+  private void insertAccessLog(UUID id, UUID userId, UUID patronId, String action, String createdAt) {
+    var schema = folioModuleMetadata.getDBSchemaName(TENANT);
+    var storedCreatedDate = LocalDateTime.ofInstant(Instant.parse(createdAt), ZoneId.systemDefault());
+    new JdbcTemplate(dataSource).update("INSERT INTO " + schema + ".access_log "
+        + "(id, user_id, patron_id, reading_room_id, reading_room_name, service_point_id, action, created_date) "
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, CAST(? AS timestamp))",
+      id, userId, patronId, READING_ROOM_ID, READING_ROOM_NAME, SERVICE_POINT_ID1, action,
+      storedCreatedDate.toString());
+  }
+
+  private List<String> getAccessLogIds(String query) throws Exception {
+    return getAccessLogIds(query, 0, 100);
+  }
+
+  private List<String> getAccessLogIds(String query, int offset, int limit) throws Exception {
+    var request = get("/reading-room/access-log")
+      .param("offset", String.valueOf(offset))
+      .param("limit", String.valueOf(limit))
+      .headers(defaultHeaders())
+      .accept(MediaType.APPLICATION_JSON);
+    if (query != null) {
+      request.param("query", query);
+    }
+    var body = this.mockMvc.perform(request)
+      .andExpect(status().isOk())
+      .andReturn().getResponse().getContentAsString();
+    return JsonPath.read(body, "$.accessLogs[*].id");
+  }
+
+  private List<String> getAllAccessLogIdsByPages(String query) throws Exception {
+    var ids = new ArrayList<String>();
+    for (var offset = 0; offset < 10; offset += 2) {
+      ids.addAll(getAccessLogIds(query, offset, 2));
+    }
+    return ids;
+  }
+
+  private static UUID uuid(int number) {
+    return UUID.fromString(String.format("00000000-0000-0000-0000-%012d", number));
+  }
+
+  private static List<String> ids(int... numbers) {
+    return Arrays.stream(numbers).mapToObj(number -> uuid(number).toString()).toList();
+  }
+
+  private static void inServerZone(String zoneId, Executable action) throws Throwable {
+    var originalZone = TimeZone.getDefault();
+    TimeZone.setDefault(TimeZone.getTimeZone(zoneId));
+    try {
+      action.execute();
     } finally {
       TimeZone.setDefault(originalZone);
     }
